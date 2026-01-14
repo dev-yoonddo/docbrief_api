@@ -9,36 +9,27 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "document_files")
+@Table(name = "document_paragraphs")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class DocumentFile {
+public class DocumentParagraph {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long fileId;
+    private Long paragraphId;
 
     @Column(nullable = false)
     private Long documentId;
 
     @Column(nullable = false)
-    private String fileName;
-
-    @Column(nullable = false)
-    private String filePath;
-
-    @Column(nullable = false)
-    private Long fileSize;
+    private int paragraphOrder;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    public DocumentFile(Long documentId, String fileName, String filePath, Long fileSize) {
+    public DocumentParagraph(Long documentId, int paragraphOrder) {
         this.documentId = documentId;
-        this.fileName = fileName;
-        this.filePath = filePath;
-        this.fileSize = fileSize;
+        this.paragraphOrder = paragraphOrder;
     }
 }
-
 

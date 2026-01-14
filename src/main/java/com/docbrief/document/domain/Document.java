@@ -1,50 +1,49 @@
 package com.docbrief.document.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "DOCUMENTS")
+@Table(name = "documents")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Document {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "DOCUMENT_ID")
-    private Long id;
+    private Long documentId;
 
-    @Column(name = "TITLE", nullable = false)
+    @Column(nullable = false)
     private String title;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "DOCUMENT_TYPE", nullable = false)
+    @Column(nullable = false)
     private DocumentType documentType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS", nullable = false)
+    @Column(nullable = false)
     private DocumentStatus status;
 
-    @Column(name = "CREATED_AT", updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
-
-    protected Document() {}
 
     public Document(String title, DocumentType documentType) {
         this.title = title;
         this.documentType = documentType;
         this.status = DocumentStatus.UPLOADED;
-        this.createdAt = LocalDateTime.now();
     }
 
     public void markExtracted() {
         this.status = DocumentStatus.EXTRACTED;
     }
 
-    public void markSummarized() {
-        this.status = DocumentStatus.SUMMRAZIED;
-    }
-
     public void markFailed() {
         this.status = DocumentStatus.FAILED;
     }
 }
+

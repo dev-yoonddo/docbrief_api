@@ -1,34 +1,36 @@
 package com.docbrief.document.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "DOCUMENT_CONTENTS")
+@Table(name = "document_contents")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DocumentContent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CONTENT_ID")
-    private Long id;
+    private Long contentId;
 
-    @Column(name = "DOCUMENT_ID", nullable = false)
+    @Column(nullable = false)
     private Long documentId;
 
-    @Lob
-    @Column(name = "CONTENT", nullable = false)
-    private String content;
+    @Column(nullable = false)
+    private String fullText;
 
-    @Column(name = "CREATED_AT", updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
-    protected DocumentContent() {}
-
-    public DocumentContent(Long documentId, String content) {
+    public DocumentContent(Long documentId, String fullText) {
         this.documentId = documentId;
-        this.content = content;
-        this.createdAt = LocalDateTime.now();
+        this.fullText = fullText;
     }
 }
+
 

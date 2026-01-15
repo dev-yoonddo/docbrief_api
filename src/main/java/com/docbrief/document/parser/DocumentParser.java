@@ -2,9 +2,10 @@ package com.docbrief.document.parser;
 
 import com.docbrief.document.domain.DocumentType;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 public interface DocumentParser {
     boolean supports(DocumentType type);
-    String parse(File file);
+    ParsedText parse(InputStream inputStream) throws IOException;
 }

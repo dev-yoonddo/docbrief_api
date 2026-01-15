@@ -3,7 +3,7 @@ package com.docbrief.document.parser;
 import com.docbrief.document.domain.DocumentType;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import java.io.InputStream;
 
 @Component
 public class DocxDocumentParser implements DocumentParser {
@@ -14,9 +14,10 @@ public class DocxDocumentParser implements DocumentParser {
     }
 
     @Override
-    public String parse(File file) {
+    public ParsedText parse(InputStream inputStream) {
+
         // Poi 사용
-        return "extracted docx to text";
+        return new ParsedText();
     }
 }
 

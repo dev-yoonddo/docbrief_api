@@ -38,6 +38,10 @@ public class Document {
         this.status = DocumentStatus.UPLOADED;
     }
 
+    public void markExtracting() {
+        this.status = DocumentStatus.EXTRACTING;
+    }
+
     public void markExtracted() {
         this.status = DocumentStatus.EXTRACTED;
     }

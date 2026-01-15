@@ -27,23 +27,19 @@ public class DocumentSentence {
     @Column(nullable = false)
     private int sentenceOrder;
 
-    @Lob
     @Column(nullable = false)
-    private String text;
+    private String sentenceText;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    public DocumentSentence(
-            Long documentId,
-            Long paragraphId,
-            int sentenceOrder,
-            String text
-    ) {
-        this.documentId = documentId;
-        this.paragraphId = paragraphId;
-        this.sentenceOrder = sentenceOrder;
-        this.text = text;
+    public static DocumentSentence create(Long documentId, Long paragraphId, int order, String text) {
+        DocumentSentence documentSentence = new DocumentSentence();
+        documentSentence.documentId = documentId;
+        documentSentence.paragraphId = paragraphId;
+        documentSentence.sentenceOrder = order;
+        documentSentence.sentenceText = text;
+        return documentSentence;
     }
 }
 

@@ -29,4 +29,8 @@ public class ParsedText {
     public List<ParsedParagraph> getParagraphs(){
         return Collections.unmodifiableList(paragraphs);
     }
+
+    public String getFullText(){
+        return fullText.toString();
+    }
 }

@@ -27,9 +27,11 @@ public class DocumentParagraph {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    public DocumentParagraph(Long documentId, int paragraphOrder) {
-        this.documentId = documentId;
-        this.paragraphOrder = paragraphOrder;
+    public static DocumentParagraph create(Long documentId, int order){
+        DocumentParagraph documentParagraph = new DocumentParagraph();
+        documentParagraph.documentId = documentId;
+        documentParagraph.paragraphOrder = order;
+        return documentParagraph;
     }
 }
 

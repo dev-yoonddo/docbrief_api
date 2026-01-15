@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class DocumentService {
+    // 문서 생성, 업로드, 상태 관리
 
     private final DocumentRepository documentRepository;
 
@@ -21,9 +22,18 @@ public class DocumentService {
     }
 
     @Transactional(readOnly = true)
-    public DocumentStatus getStatus(Long id){
-        Document document = documentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("cannot find documentId"));
+    public DocumentStatus getStatus(Long documentId){
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new IllegalArgumentException("cannot found documentId for getStatus"));
         return document.getStatus();
     }
+
+    @Transactional
+    public Document updateStatus(Long documentId, DocumentStatus status){
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new IllegalArgumentException("cannot found documentId for updateStatus"));
+        document.updateStatus(status);
+        return document;
+    }
+
 }

@@ -5,7 +5,6 @@ import com.docbrief.document.domain.DocumentStatus;
 import com.docbrief.document.dto.api.DocumentCreateRequest;
 import com.docbrief.document.repository.DocumentRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,8 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class DocumentService {
 
-    private final SummaryRequestService summaryRequestService;
+    private final DocumentStatusService documentStatusService;
     private final DocumentParsingService documentParsingService;
+    private final SummaryRequestService summaryRequestService;
 
     private final DocumentRepository documentRepository;
 
@@ -27,43 +27,46 @@ public class DocumentService {
 
     @Transactional(readOnly = true)
     public DocumentStatus getStatus(Long documentId){
-            Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new IllegalArgumentException("documentId for getStatus not found"));
+        Document document = documentRepository.findById(documentId)
+            .orElseThrow(() -> new IllegalArgumentException("documentId for getStatus not found ::: documentId : " + documentId));
         return document.getStatus();
     }
 
-    @Transactional
     public String processDocument(Long documentId, MultipartFile file){
-        Document document = documentRepository.findByDocumentId(documentId);
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new IllegalArgumentException("documentId for processing not found ::: documentId : " + documentId));
         DocumentStatus status = document.getStatus();
+
         switch(status) {
             case UPLOADED:
             case FAILED:
-                documentParsingService.parseAndSaveDocument(document, file);
-                return summarizeDocumentAsync(document);
+                documentParsingService.parseAndSaveDocument(documentId, file);
+                return summarizeDocument(documentId);
             case EXTRACTING:
                 return "this document is currently being extracted.";
             case EXTRACTED:
-                return summarizeDocumentAsync(document);
+                return summarizeDocument(documentId);
             case SUMMARIZING:
                 return "this document is currently being summarized.";
             case SUMMARIZED:
-                return summaryRequestService.requestSummary(documentId);
+                return summaryRequestService.requestSummary(document);
             default:
-                throw new IllegalStateException("unknown document status: " + status);
+                throw new IllegalStateException("unknown document status ::: status : " + status);
         }
     }
 
-    @Async
-    @Transactional
-    public String summarizeDocumentAsync(Document document) {
-        document.updateStatus(DocumentStatus.SUMMARIZING);
-        try {
-            String summary = summaryRequestService.requestSummary(document.getDocumentId());
-            document.updateStatus(DocumentStatus.SUMMARIZED);
+    public String summarizeDocument(Long documentId) {
+        // 상태값 업데이트 시 document 엔티티의 영속이 분리될 수 있으므로 재조회
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new IllegalArgumentException("documentId for summarizing not found ::: documentId : " + documentId));
+        documentStatusService.updateDocumentStatus(documentId, DocumentStatus.SUMMARIZING);
+
+       try {
+            String summary = summaryRequestService.requestSummary(document);
+            documentStatusService.updateDocumentStatus(documentId, DocumentStatus.SUMMARIZED);
             return summary;
         } catch (Exception e) {
-            document.updateStatus(DocumentStatus.FAILED);
+            documentStatusService.updateDocumentStatus(documentId, DocumentStatus.FAILED);
             throw e;
         }
     }

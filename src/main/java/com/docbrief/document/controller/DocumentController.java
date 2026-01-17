@@ -4,9 +4,7 @@ import com.docbrief.document.domain.DocumentStatus;
 import com.docbrief.document.dto.api.DocumentCreateRequest;
 import com.docbrief.document.dto.api.DocumentCreateResponse;
 import com.docbrief.document.dto.api.DocumentStatusResponse;
-import com.docbrief.document.service.DocumentParsingService;
 import com.docbrief.document.service.DocumentService;
-import com.docbrief.document.service.SummaryRequestService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class DocumentController {
 
     private final DocumentService documentService;
-
-    private final DocumentParsingService documentParsingService;
-
-    private final SummaryRequestService summaryRequestService;
 
     @PostMapping
     public ResponseEntity<DocumentCreateResponse> createDocumentId(@RequestBody DocumentCreateRequest request){

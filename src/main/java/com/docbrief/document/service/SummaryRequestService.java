@@ -26,20 +26,12 @@ public class SummaryRequestService {
     private final ObjectMapper objectMapper;
 
     // TODO:규격 협의 후 최종 반환타입 변경
-    public String requestSummary(Long documentId) {
-
-        // 문서 조회 및 문서 상태 체크
-        Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new IllegalArgumentException("documentId for summary request not found"));
-
-        if (!DocumentStatus.EXTRACTED.equals(document.getStatus())) {
-            new IllegalStateException("this document is not already for summary");
-        }
-
+    public String requestSummary(Document document) {
+        Long documentId = document.getDocumentId();
         // 문서 원문 조회
         DocumentContent documentContent = contentRepository.findByDocumentId(documentId);
         if (documentContent == null) {
-            throw new IllegalStateException("document content for summray not found");
+            throw new IllegalStateException("document content for summary not found ::: documentId : " + documentId);
         }
 
         // 문단 및 문장 조회

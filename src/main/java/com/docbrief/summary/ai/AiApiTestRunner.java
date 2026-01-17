@@ -172,7 +172,7 @@ public class AiApiTestRunner {
 
         System.out.println("첫번째 요청 PromptStage.PREVIEW");
 
-        prompt = promptBuilder.buildSummaryPrompt(PromptStage.PREVIEW); //documentText 원문 내용
+        prompt = promptBuilder.buildSummaryPrompt(documentFullText); //documentText 원문 내용
 
 
         result = aiClient.summarize(

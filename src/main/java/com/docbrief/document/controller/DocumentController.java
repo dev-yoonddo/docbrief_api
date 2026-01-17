@@ -38,9 +38,9 @@ public class DocumentController {
     @PostMapping("/{id}/parse")
     // TODO:규격 협의 후 최종 반환타입 변경
     //public ResponseEntity<?> parsDocument(@PathVariable Long id, @RequestParam MultipartFile file){
-    public String parsDocument(@PathVariable Long id, @RequestParam MultipartFile file){
+    public void parsDocument(@PathVariable Long id, @RequestParam MultipartFile file){
         documentParsingService.parseAndSaveDocument(id, file);
-        return summaryRequestService.requestSummary(id);
+        summaryRequestService.requestSummary(id);
 
         //return ResponseEntity.ok().build();
     }

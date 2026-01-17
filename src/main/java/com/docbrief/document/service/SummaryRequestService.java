@@ -6,6 +6,7 @@ import com.docbrief.document.repository.DocumentContentRepository;
 import com.docbrief.document.repository.DocumentParagraphRepository;
 import com.docbrief.document.repository.DocumentRepository;
 import com.docbrief.document.repository.DocumentSentenceRepository;
+import com.docbrief.summary.service.SummaryProcessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class SummaryRequestService {
     private final DocumentSentenceRepository sentenceRepository;
 
     private final ObjectMapper objectMapper;
+    private final SummaryProcessor summaryProcessor;
 
     // TODO:규격 협의 후 최종 반환타입 변경
     public String requestSummary(Long documentId) {
@@ -60,19 +62,17 @@ public class SummaryRequestService {
         }
 
         SummaryInternalRequest request = new SummaryInternalRequest(documentId, documentContent.getFullText(), paragraphDtos);
-        String requestJson = "";
-        try{
-            requestJson =  objectMapper.writeValueAsString(request);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to seriallize summary request", e);
-        }
 
-        return requestJson;
+
+        //return requestJson;
 
         // ai 분석 요청
         // 추후 return 값 결정 후 응답dto 구성(DocumentStatus, Stirng returnText...)
         // SummaryInternalResponse response  = analysisClient.summarize(requestJson);
         // SummaryInternalResponse 상태값에 따라 document 상태 업데이트
         // return analysisClient.summarize(requestJson);
+        return summaryProcessor.startSummaryEngine(request);
     }
+
+
 }

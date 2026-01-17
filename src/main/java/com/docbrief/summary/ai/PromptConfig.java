@@ -10,17 +10,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "prompt.summary")
 public class PromptConfig {
-    private Stage preview;
-    private Stage validate;
-
-    @Getter
-    @Setter
-    public static class Stage {
-        private String role;
-        private String instruction;
-        private String constraint;
-        private String highlightRule;
-        private String outputFormat;
-        private String violationReason;
-    }
+    private String role;
+    private String instruction;
+    private String constraint;
+    private String highlightRule;
+    private String outputFormat;
+    private String violationReason;
 }

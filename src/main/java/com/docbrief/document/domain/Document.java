@@ -9,7 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "documents")
+@Table(name="documents")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Document {
@@ -18,18 +18,19 @@ public class Document {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long documentId;
 
-    @Column(nullable = false)
+    @Column(name="title", nullable=false)
     private String title;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name="document_type", nullable=false)
     private DocumentType documentType;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name="status", nullable=false)
     private DocumentStatus status;
 
     @CreationTimestamp
+    @Column(name="created_at")
     private LocalDateTime createdAt;
 
     public Document(String title, DocumentType documentType) {

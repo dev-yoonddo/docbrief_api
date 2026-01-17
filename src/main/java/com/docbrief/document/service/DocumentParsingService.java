@@ -16,16 +16,13 @@ import java.io.InputStream;
 @Service
 @AllArgsConstructor
 public class DocumentParsingService {
-    // 문서 파싱
-    private final DocumentContentRepository contentRepository;
-
-    private final DocumentParagraphRepository paragraphRepository;
-
-    private final DocumentSentenceRepository sentenceRepository;
 
     private final DocumentService documentService;
 
-    @Transactional
+    private final DocumentContentRepository contentRepository;
+    private final DocumentParagraphRepository paragraphRepository;
+    private final DocumentSentenceRepository sentenceRepository;
+
     public void parseAndSaveDocument(Long documentId, MultipartFile file){
 
         Document document = documentService.updateStatus(documentId, DocumentStatus.EXTRACTING);
@@ -34,7 +31,7 @@ public class DocumentParsingService {
             DocumentParser documentParser = new TxtDocumentParser();
             ParsedText parsedText = documentParser.parse(inputStream);
 
-            saveParsedText(documentId, parsedText);
+            saveParsedText(document, parsedText);
             document.updateStatus(DocumentStatus.EXTRACTED);
 
         }catch (IOException ioe){
@@ -44,7 +41,9 @@ public class DocumentParsingService {
     }
 
     @Transactional
-    private void saveParsedText(Long documentId, ParsedText parsedText){
+    private void saveParsedText(Document document, ParsedText parsedText){
+
+        Long documentId = document.getDocumentId();
 
         // 원문 저장
         DocumentContent content = DocumentContent.create(documentId, parsedText.getFullText());
@@ -57,7 +56,7 @@ public class DocumentParsingService {
 
             for(ParsedSentence parsedSentence : parsedParagraph.getSentences()){
                 DocumentSentence sentence
-                        = DocumentSentence.create(paragraph.getDocumentId(), paragraph.getParagraphId(), parsedSentence.getOrder(), parsedSentence.getText());
+                        = DocumentSentence.create(documentId, paragraph.getParagraphId(), parsedSentence.getOrder(), parsedSentence.getText());
                 sentenceRepository.save(sentence);
             }
         }

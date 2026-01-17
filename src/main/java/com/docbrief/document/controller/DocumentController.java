@@ -1,11 +1,12 @@
 package com.docbrief.document.controller;
 
 import com.docbrief.document.domain.DocumentStatus;
-import com.docbrief.document.dto.DocumentCreateRequest;
-import com.docbrief.document.dto.DocumentCreateResponse;
-import com.docbrief.document.dto.DocumentStatusResponse;
+import com.docbrief.document.dto.api.DocumentCreateRequest;
+import com.docbrief.document.dto.api.DocumentCreateResponse;
+import com.docbrief.document.dto.api.DocumentStatusResponse;
 import com.docbrief.document.service.DocumentParsingService;
 import com.docbrief.document.service.DocumentService;
+import com.docbrief.document.service.SummaryRequestService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,8 @@ public class DocumentController {
 
     private final DocumentParsingService documentParsingService;
 
+    private final SummaryRequestService summaryRequestService;
+
     @PostMapping
     public ResponseEntity<DocumentCreateResponse> createDocumentId(@RequestBody DocumentCreateRequest request){
         Long documentId = documentService.create(request);
@@ -33,9 +36,13 @@ public class DocumentController {
     }
 
     @PostMapping("/{id}/parse")
-    public ResponseEntity<?> parsDocument(@PathVariable Long id, @RequestParam MultipartFile file){
+    // TODO:규격 협의 후 최종 반환타입 변경
+    //public ResponseEntity<?> parsDocument(@PathVariable Long id, @RequestParam MultipartFile file){
+    public String parsDocument(@PathVariable Long id, @RequestParam MultipartFile file){
         documentParsingService.parseAndSaveDocument(id, file);
-        return ResponseEntity.ok().build();
+        return summaryRequestService.requestSummary(id);
+
+        //return ResponseEntity.ok().build();
     }
 
 }

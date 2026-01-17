@@ -1,4 +1,4 @@
-package com.docbrief.document.dto;
+package com.docbrief.document.dto.api;
 
 import com.docbrief.document.domain.DocumentType;
 import lombok.AllArgsConstructor;

@@ -23,7 +23,7 @@ public class DocumentService {
 
     @Transactional(readOnly = true)
     public DocumentStatus getStatus(Long documentId){
-        Document document = documentRepository.findById(documentId)
+            Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new IllegalArgumentException("documentId for getStatus not found"));
         return document.getStatus();
     }

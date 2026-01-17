@@ -9,22 +9,24 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "document_paragraphs")
+@Table(name="document_paragraphs")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DocumentParagraph {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="paragraph_id")
     private Long paragraphId;
 
-    @Column(nullable = false)
+    @Column(name="document_id", nullable=false)
     private Long documentId;
 
-    @Column(nullable = false)
+    @Column(name="paragraph_order", nullable=false)
     private int paragraphOrder;
 
     @CreationTimestamp
+    @Column(name="created_at")
     private LocalDateTime createdAt;
 
     public static DocumentParagraph create(Long documentId, int order){

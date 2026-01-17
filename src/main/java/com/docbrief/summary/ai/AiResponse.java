@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class AnalysisResponse {
+public class AiResponse {
 
     private List<Candidate> candidates;
 

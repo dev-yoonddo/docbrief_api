@@ -8,12 +8,12 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Component
-public class AnalysisClient {
+public class AiClient {
 
     private final RestTemplate restTemplate;
     private final String apiKey;
 
-    public AnalysisClient(
+    public AiClient(
             RestTemplate restTemplate,
             @Value("${gemini.api.key}") String apiKey
     ) {
@@ -27,10 +27,10 @@ public class AnalysisClient {
                 "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
                         + "?key=" + apiKey;
 
-        AnalysisRequest request = new AnalysisRequest(
+        AiRequest request = new AiRequest(
                 List.of(
-                        new AnalysisRequest.Content(
-                                List.of(new AnalysisRequest.Part(text))
+                        new AiRequest.Content(
+                                List.of(new AiRequest.Part(text))
                         )
                 )
         );
@@ -38,15 +38,15 @@ public class AnalysisClient {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<AnalysisRequest> entity =
+        HttpEntity<AiRequest> entity =
                 new HttpEntity<>(request, headers);
 
-        ResponseEntity<AnalysisResponse> response =
+        ResponseEntity<AiResponse> response =
                 restTemplate.exchange(
                         url,
                         HttpMethod.POST,
                         entity,
-                        AnalysisResponse.class
+                        AiResponse.class
                 );
 
         return response.getBody().getText();

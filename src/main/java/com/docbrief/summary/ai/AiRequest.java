@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class AnalysisRequest {
+public class AiRequest {
 
     private List<Content> contents;
 
@@ -23,8 +23,8 @@ public class AnalysisRequest {
         private String text;
     }
 
-    public static AnalysisRequest fromText(String text) {
-        return new AnalysisRequest(
+    public static AiRequest fromText(String text) {
+        return new AiRequest(
                 List.of(
                         new Content(
                                 List.of(new Part(text))

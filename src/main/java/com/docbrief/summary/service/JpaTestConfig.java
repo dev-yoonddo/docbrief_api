@@ -15,14 +15,9 @@ public class JpaTestConfig {
     CommandLineRunner summaryJobSelectTest(SummaryJobRepository repository) {
 
         return args -> {
-            System.out.println("=== SummaryJob Select Test ===");
             long count = repository.count();
-            System.out.println("SummaryJob count = " + count);
 
-            repository.findAllByJpql()
-            .forEach(job ->
-                    System.out.println("JPQL ID = " + job.getJobId())
-            );
+            repository.findAllByJpql();
         };
     }
 
@@ -30,7 +25,7 @@ public class JpaTestConfig {
     CommandLineRunner entityCheck(EntityManager em) {
         return args -> {
             em.getMetamodel().getEntities()
-                    .forEach(e -> System.out.println("Entity = " + e.getName()));
+                    .forEach(e -> e.getName());
         };
     }
 }

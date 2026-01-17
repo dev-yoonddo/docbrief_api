@@ -1,4 +1,4 @@
-package com.docbrief.summary;
+package com.docbrief.summary.domain;
 
 public enum SummaryStatus {
     REQUESTED,     // AI 분석 요청됨

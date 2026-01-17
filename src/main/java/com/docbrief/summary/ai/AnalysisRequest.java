@@ -23,7 +23,6 @@ public class AnalysisRequest {
         private String text;
     }
 
-    // 🔹 편의용 팩토리 메서드 (추천)
     public static AnalysisRequest fromText(String text) {
         return new AnalysisRequest(
                 List.of(

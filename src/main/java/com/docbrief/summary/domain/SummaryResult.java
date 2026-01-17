@@ -1,6 +1,5 @@
 package com.docbrief.summary.domain;
 
-import com.docbrief.summary.SummaryStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

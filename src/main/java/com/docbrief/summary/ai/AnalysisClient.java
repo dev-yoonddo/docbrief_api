@@ -22,9 +22,7 @@ public class AnalysisClient {
     }
 
     public String summarize(String text) {
-        System.out.println("====== Gemini 응답 ======");
-        System.out.println(apiKey);
-        System.out.println("========================");
+
         String url =
                 "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
                         + "?key=" + apiKey;

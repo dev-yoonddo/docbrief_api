@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class PromptBuilder {
     private final PromptProvider promptProvider;
 
-    public String buildSummaryPrompt(String documentText) {
+    public StringBuilder buildSummaryPrompt(String documentText) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(promptProvider.get(PromptSection.ROLE)).append("\n\n");
@@ -19,9 +19,9 @@ public class PromptBuilder {
         sb.append(promptProvider.get(PromptSection.OUTPUT_FORMAT)).append("\n\n");
         sb.append(promptProvider.get(PromptSection.VIOLATION_REASON)).append("\n\n");
 
-        sb.append("문서 내용:\n");
-        sb.append(documentText);
+        /*sb.append("문서 내용:\n");
+        sb.append(documentText);*/
 
-        return sb.toString();
+        return sb;
     }
 }

@@ -1,12 +1,15 @@
 package com.docbrief.document.service;
 
-import com.docbrief.document.domain.*;
+import com.docbrief.document.domain.Document;
+import com.docbrief.document.domain.DocumentContent;
+import com.docbrief.document.domain.DocumentParagraph;
+import com.docbrief.document.domain.DocumentSentence;
 import com.docbrief.document.dto.internal.SummaryInternalRequest;
 import com.docbrief.document.repository.DocumentContentRepository;
 import com.docbrief.document.repository.DocumentParagraphRepository;
 import com.docbrief.document.repository.DocumentRepository;
 import com.docbrief.document.repository.DocumentSentenceRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.docbrief.summary.service.SummaryProcessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,7 @@ public class SummaryRequestService {
     private final DocumentSentenceRepository sentenceRepository;
 
     private final ObjectMapper objectMapper;
+    private final SummaryProcessor summaryProcessor;
 
     // TODO:규격 협의 후 최종 반환타입 변경
     public String requestSummary(Document document) {
@@ -52,19 +56,17 @@ public class SummaryRequestService {
         }
 
         SummaryInternalRequest request = new SummaryInternalRequest(documentId, documentContent.getFullText(), paragraphDtos);
-        String requestJson = "";
-        try{
-            requestJson =  objectMapper.writeValueAsString(request);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to seriallize summary request", e);
-        }
 
-        return requestJson;
+
+        //return requestJson;
 
         // ai 분석 요청
         // 추후 return 값 결정 후 응답dto 구성(DocumentStatus, Stirng returnText...)
         // SummaryInternalResponse response  = analysisClient.summarize(requestJson);
         // SummaryInternalResponse 상태값에 따라 document 상태 업데이트
         // return analysisClient.summarize(requestJson);
+        return summaryProcessor.startSummaryEngine(request);
     }
+
+
 }

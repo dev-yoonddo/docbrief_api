@@ -8,6 +8,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class SummaryInternalRequest {
+    public static List<SentenceDto> SentenceDto;
     private Long documentId;
     private String fullText;
     private List<ParagraphDto> paragraphs;

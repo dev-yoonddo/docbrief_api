@@ -3,7 +3,7 @@ package com.docbrief.document.parser;
 import com.docbrief.document.domain.DocumentType;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import java.io.InputStream;
 
 @Component
 public class PdfDocumentParser implements DocumentParser {
@@ -14,8 +14,8 @@ public class PdfDocumentParser implements DocumentParser {
     }
 
     @Override
-    public String parse(File file) {
+    public ParsedText parse(InputStream inputStream) {
         // PDFBox 사용
-        return "extracted pdf to text";
+        return new ParsedText();
     }
 }

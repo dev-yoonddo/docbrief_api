@@ -18,7 +18,7 @@ public class ParserFactory {
         return parsers.stream()
                 .filter(p -> p.supports(type))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("지원하지 않는 타입"));
+                .orElseThrow(() -> new IllegalArgumentException("this document type is not supported : " + type));
     }
 }
 

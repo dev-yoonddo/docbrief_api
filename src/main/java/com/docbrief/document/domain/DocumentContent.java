@@ -27,9 +27,11 @@ public class DocumentContent {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    public DocumentContent(Long documentId, String fullText) {
-        this.documentId = documentId;
-        this.fullText = fullText;
+    public static DocumentContent create(Long documentId, String fullText){
+        DocumentContent documentContent = new DocumentContent();
+        documentContent.documentId = documentId;
+        documentContent.fullText = fullText;
+        return documentContent;
     }
 }
 

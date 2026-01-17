@@ -17,15 +17,14 @@ import java.io.InputStream;
 @AllArgsConstructor
 public class DocumentParsingService {
 
-    private final DocumentService documentService;
-
     private final DocumentContentRepository contentRepository;
     private final DocumentParagraphRepository paragraphRepository;
     private final DocumentSentenceRepository sentenceRepository;
 
-    public void parseAndSaveDocument(Long documentId, MultipartFile file){
-
-        Document document = documentService.updateStatus(documentId, DocumentStatus.EXTRACTING);
+    public void parseAndSaveDocument(Document document, MultipartFile file){
+        // 최초/실패 후 재파싱하는 경우
+        contentRepository.deleteByDocumentId(document.getDocumentId());
+        document.updateStatus(DocumentStatus.EXTRACTING);
 
         try(InputStream inputStream = file.getInputStream()) {
             DocumentParser documentParser = new TxtDocumentParser();
@@ -42,7 +41,6 @@ public class DocumentParsingService {
 
     @Transactional
     private void saveParsedText(Document document, ParsedText parsedText){
-
         Long documentId = document.getDocumentId();
 
         // 원문 저장

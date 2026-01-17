@@ -5,6 +5,6 @@ public enum DocumentStatus {
     EXTRACTED,
     EXTRACTING,
     SUMMARIZING,
-    SUMMRAZIED,
+    SUMMARIZED,
     FAILED
 }

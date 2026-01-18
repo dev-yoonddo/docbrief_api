@@ -1,5 +1,7 @@
 package com.docbrief.summary.ai;
 
+import com.docbrief.summary.domain.SummaryJob;
+import com.docbrief.summary.service.SummaryJobService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -21,7 +23,7 @@ public class AiClient {
         this.apiKey = apiKey;
     }
 
-    public String summarize(String text) {
+    public String summarize(String text, SummaryJob summaryJob) {
 
         String url =
                 "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"

@@ -8,11 +8,19 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "summary_results")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor
+@SequenceGenerator(
+    name = "summary_job_seq_gen",
+    sequenceName = "SUMMARY_JOB_SEQ",
+    allocationSize = 1
+)
 public class SummaryResult {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "summary_job_seq_gen"
+    )
     @Column(name = "result_id")
     private Long id;
 
@@ -24,4 +32,6 @@ public class SummaryResult {
 
     @Column(name = "created_at", updatable = false, insertable = false)
     private LocalDateTime createdAt;
+
+
 }

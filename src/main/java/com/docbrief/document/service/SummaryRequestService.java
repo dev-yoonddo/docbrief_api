@@ -1,13 +1,15 @@
 package com.docbrief.document.service;
 
-import com.docbrief.document.domain.*;
+import com.docbrief.document.domain.Document;
+import com.docbrief.document.domain.DocumentContent;
+import com.docbrief.document.domain.DocumentParagraph;
+import com.docbrief.document.domain.DocumentSentence;
 import com.docbrief.document.dto.internal.SummaryInternalRequest;
 import com.docbrief.document.repository.DocumentContentRepository;
 import com.docbrief.document.repository.DocumentParagraphRepository;
 import com.docbrief.document.repository.DocumentRepository;
 import com.docbrief.document.repository.DocumentSentenceRepository;
 import com.docbrief.summary.service.SummaryProcessor;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,20 +30,12 @@ public class SummaryRequestService {
     private final SummaryProcessor summaryProcessor;
 
     // TODO:규격 협의 후 최종 반환타입 변경
-    public String requestSummary(Long documentId) {
-
-        // 문서 조회 및 문서 상태 체크
-        Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new IllegalArgumentException("documentId for summary request not found"));
-
-        if (!DocumentStatus.EXTRACTED.equals(document.getStatus())) {
-            new IllegalStateException("this document is not already for summary");
-        }
-
+    public String requestSummary(Document document) {
+        Long documentId = document.getDocumentId();
         // 문서 원문 조회
         DocumentContent documentContent = contentRepository.findByDocumentId(documentId);
         if (documentContent == null) {
-            throw new IllegalStateException("document content for summray not found");
+            throw new IllegalStateException("document content for summary not found ::: documentId : " + documentId);
         }
 
         // 문단 및 문장 조회

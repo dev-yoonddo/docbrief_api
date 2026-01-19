@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SummaryResultRepository extends JpaRepository<SummaryResult, Long> {
-    @Query("select s from SummaryJob s")
-    List<SummaryResult> findAllByJpql();
+
+    Optional<SummaryResult> findByJobId(Long jobId);
 
 }

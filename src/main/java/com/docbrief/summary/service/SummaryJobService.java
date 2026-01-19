@@ -23,27 +23,21 @@ public class SummaryJobService {
                 .orElseThrow(() -> new IllegalArgumentException("SummaryJob not found"));
     }
 
-    public void setJobProcessing(Long jobId) {
+    public SummaryJob setJobProcessing(Long jobId) {
         SummaryJob job = getJob(jobId);
         job.start();
+        return job;
     }
 
-    public void setJobCompleted(Long jobId) {
+    public SummaryJob setJobCompleted(Long jobId) {
         SummaryJob job = getJob(jobId);
         job.complete();
+        return job;
     }
-    public void setJobFailed(Long jobId) {
+    public SummaryJob setJobFailed(Long jobId) {
         SummaryJob job = getJob(jobId);
         job.fail();
+        return job;
     }
 
-
-
-    /*public SummaryJob updateSummaryJob(SummaryJob summaryJob){
-        if(summaryJob.getStatus() == SummaryStatus.REQUESTED){
-            summaryJob = SummaryJob.start();
-        }
-
-        return summaryJobRepository.update(summaryJob);
-    }*/
 }

@@ -50,7 +50,8 @@ public class AiClient {
                         entity,
                         AiResponse.class
                 );
-
-        return response.getBody().getText();
+        String result = response.getBody().getText();
+        result = result.replaceAll("```json", "").replaceAll("```", "").trim();
+        return result;
     }
 }

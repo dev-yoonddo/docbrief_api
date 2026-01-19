@@ -13,9 +13,7 @@ import java.util.List;
 public class TxtDocumentParser implements DocumentParser{
 
     @Override
-    public boolean supports(DocumentType type) {
-        return type == DocumentType.TXT;
-    }
+    public DocumentType getSupportedType() { return DocumentType.TXT; }
 
     @Override
     public ParsedText parse(InputStream inputStream) throws IOException {
@@ -74,6 +72,10 @@ public class TxtDocumentParser implements DocumentParser{
     }
 
     private String[] splitToSentences(String text) {
+        // 번호, 로마자, 괄호 번호
+        if (text.matches("^(\\d+|[IVX]+|\\([0-9]+\\))\\.\\s+.*")) {
+            return new String[]{text};
+        }
         return text.split("(?<=[.!?])\\s+");
     }
 }

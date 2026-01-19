@@ -10,6 +10,7 @@ import com.docbrief.document.repository.DocumentParagraphRepository;
 import com.docbrief.document.repository.DocumentRepository;
 import com.docbrief.document.repository.DocumentSentenceRepository;
 import com.docbrief.summary.service.SummaryProcessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -57,8 +58,15 @@ public class SummaryRequestService {
 
         SummaryInternalRequest request = new SummaryInternalRequest(documentId, documentContent.getFullText(), paragraphDtos);
 
+        /*String requestJson = "";
+        try{
+            requestJson =  objectMapper.writeValueAsString(request);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to seriallize summary request", e);
+        }
 
-        //return requestJson;
+        return requestJson;*/
+
 
         // ai 분석 요청
         // 추후 return 값 결정 후 응답dto 구성(DocumentStatus, Stirng returnText...)

@@ -18,6 +18,8 @@ import java.io.InputStream;
 public class DocumentParsingService {
 
     private final DocumentStatusService documentStatusService;
+    private final DocumentTypeResolver typeResolver;
+    private final ParserFactory parserFactory;
 
     private final DocumentRepository documentRepository;
     private final DocumentContentRepository contentRepository;
@@ -36,8 +38,9 @@ public class DocumentParsingService {
         documentStatusService.updateDocumentStatus(documentId, DocumentStatus.EXTRACTING);
 
         try(InputStream inputStream = file.getInputStream()) {
-            DocumentParser documentParser = new TxtDocumentParser();
-            ParsedText parsedText = documentParser.parse(inputStream);
+            DocumentType type = typeResolver.resolveFromFileName(file.getOriginalFilename());
+            DocumentParser parser = parserFactory.getParser(type);
+            ParsedText parsedText = parser.parse(inputStream);
 
             saveParsedText(document, parsedText);
             documentStatusService.updateDocumentStatus(documentId, DocumentStatus.EXTRACTED);

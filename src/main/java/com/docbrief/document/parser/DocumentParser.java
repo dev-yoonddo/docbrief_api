@@ -6,6 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public interface DocumentParser {
-    boolean supports(DocumentType type);
+    DocumentType getSupportedType();
     ParsedText parse(InputStream inputStream) throws IOException;
 }

@@ -13,9 +13,7 @@ import java.util.List;
 public class TxtDocumentParser implements DocumentParser{
 
     @Override
-    public boolean supports(DocumentType type) {
-        return type == DocumentType.TXT;
-    }
+    public DocumentType getSupportedType() { return DocumentType.TXT; }
 
     @Override
     public ParsedText parse(InputStream inputStream) throws IOException {

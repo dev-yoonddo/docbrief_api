@@ -9,9 +9,7 @@ import java.io.InputStream;
 public class DocxDocumentParser implements DocumentParser {
 
     @Override
-    public boolean supports(DocumentType type) {
-        return type == DocumentType.DOCX;
-    }
+    public DocumentType getSupportedType() { return DocumentType.DOCX; }
 
     @Override
     public ParsedText parse(InputStream inputStream) {

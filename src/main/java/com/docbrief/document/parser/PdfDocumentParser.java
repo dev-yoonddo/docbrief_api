@@ -9,9 +9,7 @@ import java.io.InputStream;
 public class PdfDocumentParser implements DocumentParser {
 
     @Override
-    public boolean supports(DocumentType type) {
-        return type == DocumentType.PDF;
-    }
+    public DocumentType getSupportedType() { return DocumentType.PDF; }
 
     @Override
     public ParsedText parse(InputStream inputStream) {

@@ -31,9 +31,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'  // JPA 의존성
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    implementation 'com.google.genai:google-genai:1.8.0' //google Gemini API 의존성
+    implementation 'com.google.genai:google-genai:1.8.0' // google Gemini API 의존성
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'     // docx 파싱
+    implementation 'org.apache.pdfbox:pdfbox:2.0.30'    // pdf 파싱
 }
 
 tasks.named('test') {

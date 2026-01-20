@@ -19,8 +19,7 @@ public class DocxDocumentParser implements DocumentParser {
     public ParsedText parse(InputStream inputStream) {
         ParsedText parsedText = new ParsedText();
 
-        try (XWPFDocument document = new XWPFDocument(inputStream)) {
-
+        try(XWPFDocument document = new XWPFDocument(inputStream)) {
             int paragraphOrder = 1;
             List<XWPFParagraph> paragraphs = document.getParagraphs();
 

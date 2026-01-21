@@ -36,7 +36,7 @@ public class Document {
     public Document(String title, DocumentType documentType) {
         this.title = title;
         this.documentType = documentType;
-        this.status = DocumentStatus.UPLOADED;
+        this.status = DocumentStatus.CREATED;
     }
 
     public void updateStatus(DocumentStatus status){

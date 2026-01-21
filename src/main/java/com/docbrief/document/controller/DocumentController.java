@@ -1,7 +1,6 @@
 package com.docbrief.document.controller;
 
 import com.docbrief.document.domain.DocumentStatus;
-import com.docbrief.document.dto.api.DocumentCreateRequest;
 import com.docbrief.document.dto.api.DocumentCreateResponse;
 import com.docbrief.document.dto.api.DocumentStatusResponse;
 import com.docbrief.document.service.DocumentService;
@@ -13,13 +12,14 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/documents")
 @AllArgsConstructor
+@CrossOrigin(origins="http://localhost:5173")
 public class DocumentController {
 
     private final DocumentService documentService;
 
     @PostMapping
-    public ResponseEntity<DocumentCreateResponse> createDocumentId(@RequestBody DocumentCreateRequest request){
-        Long documentId = documentService.create(request);
+    public ResponseEntity<DocumentCreateResponse> create(@RequestParam("file") MultipartFile file){
+        Long documentId = documentService.create(file);
         return ResponseEntity.ok(new DocumentCreateResponse(documentId));
     }
 
@@ -31,7 +31,7 @@ public class DocumentController {
 
     @PostMapping("/{id}/parse")
     // TODO:규격 협의 후 최종 반환타입 변경
-    public ResponseEntity<?> parsDocument(@PathVariable Long id, @RequestParam MultipartFile file){
+    public ResponseEntity<?> parsDocument(@PathVariable Long id, @RequestParam("file") MultipartFile file){
         String result = documentService.processDocument(id, file);
         return ResponseEntity.ok(result);
     }

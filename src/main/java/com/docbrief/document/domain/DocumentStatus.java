@@ -1,7 +1,7 @@
 package com.docbrief.document.domain;
 
 public enum DocumentStatus {
-    UPLOADED,
+    CREATED,
     EXTRACTED,
     EXTRACTING,
     SUMMARIZING,

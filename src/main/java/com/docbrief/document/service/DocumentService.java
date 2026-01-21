@@ -2,7 +2,7 @@ package com.docbrief.document.service;
 
 import com.docbrief.document.domain.Document;
 import com.docbrief.document.domain.DocumentStatus;
-import com.docbrief.document.dto.api.DocumentCreateRequest;
+import com.docbrief.document.domain.DocumentType;
 import com.docbrief.document.repository.DocumentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,8 +19,12 @@ public class DocumentService {
 
     private final DocumentRepository documentRepository;
 
-    public Long create(DocumentCreateRequest request){
-        Document document = new Document(request.getTitle(), request.getDocumentType());
+    public Long create(MultipartFile file){
+        if(file == null || file.isEmpty()) { throw new IllegalArgumentException("file is required"); }
+        if(file.getOriginalFilename() == null) { throw new IllegalArgumentException("invalid file name"); }
+
+        DocumentType type = DocumentType.fromFileName(file.getOriginalFilename());
+        Document document = new Document(file.getOriginalFilename(), type);
         documentRepository.save(document);
         return document.getDocumentId();
     }
@@ -38,7 +42,7 @@ public class DocumentService {
         DocumentStatus status = document.getStatus();
 
         switch(status) {
-            case UPLOADED:
+            case CREATED:
             case FAILED:
                 documentParsingService.parseAndSaveDocument(documentId, file);
                 return summarizeDocument(documentId);

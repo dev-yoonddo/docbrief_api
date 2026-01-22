@@ -33,6 +33,14 @@ public class SummaryProcessor {
     private SummaryResultService summaryResultService;
     private SummaryResultRepository summaryResultRepository;
 
+    /**
+     * SummaryInternalRequest 객체를 JSON 문자열로 직렬화 후
+     * AI 요약 프롬프트에 전달한다.
+     *
+     * @param summaryRequest 요약 대상 문서의 구조화된 객체
+     * @return JSON 형태의 문자열
+     * @throws RuntimeException AI 요청 실패 시
+     */
     public String startSummaryEngine(SummaryInternalRequest summaryRequest){
         LocalDateTime date = null;
         String result = "";
@@ -102,23 +110,30 @@ public class SummaryProcessor {
         return result;
     }
 
-    /*
-     * @param : SummaryInternalRequest
-     * Document -> JSON 파싱
-     * */
-    public String summaryRequestToJson(SummaryInternalRequest request){
+    /**
+     * SummaryInternalRequest 객체를 JSON 문자열로 직렬화 한다.
+     *
+     * @param summaryRequest 요약 대상 문서의 구조화된 객체
+     * @return JSON 형태의 문자열
+     * @throws RuntimeException JSON 변환 실패 시
+     */
+    public String summaryRequestToJson(SummaryInternalRequest summaryRequest){
         String requestJson = "";
         try{
-            requestJson =  objectMapper.writeValueAsString(request);
+            requestJson =  objectMapper.writeValueAsString(summaryRequest);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Failed to seriallize summary request", e);
         }
         return requestJson;
     }
-    /*
-    * @param : Long
-    * Summary -> JSON 파싱
-    * */
+
+    /**
+     * JSON 문자열을 SummaryResponse 객체로 역직렬화 한다.
+     *
+     * @param jobId 요약 결과 ID
+     * @return SummaryResponse 객체
+     * @throws RuntimeException JSON 변환 실패 시
+     */
     public SummaryResponse getSummaryResult(Long jobId) {
         try {
         SummaryResult result = summaryResultRepository.findByJobId(jobId)

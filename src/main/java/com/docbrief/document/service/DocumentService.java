@@ -79,7 +79,7 @@ public class DocumentService {
         switch(status) {
             case CREATED:
             case FAILED:
-                documentParsingService.parseAndSaveUrlText(documentId, url);
+                documentParsingService.parseAndSaveUrlHtml(documentId, url);
                 break;
             case EXTRACTING:
                 throw new IllegalStateException("this document is currently being extracted.");

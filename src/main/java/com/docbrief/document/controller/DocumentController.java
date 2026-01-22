@@ -40,10 +40,7 @@ public class DocumentController {
 
     @PostMapping("/{id}/url/process")
     public SummaryInternalRequest processFromUrl(@PathVariable Long id,  @RequestParam("url") String url){
-        SummaryInternalRequest request = documentService.processUrlParsing(id, url);
-
-        log.info("dddddd");
-        return request;
+        return documentService.processUrlParsing(id, url);
     }
 
     @GetMapping("/{id}/status")

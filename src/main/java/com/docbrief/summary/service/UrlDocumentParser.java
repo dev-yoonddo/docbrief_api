@@ -19,7 +19,7 @@ import java.util.List;
 
 @Service
 public class UrlDocumentParser implements DocumentParser{
-    public String extractText(String url) {
+    public String extractTextFromUrl(String url) {
         try {
             Document doc = Jsoup.connect(url)
                     .userAgent("Mozilla/5.0")
@@ -35,9 +35,10 @@ public class UrlDocumentParser implements DocumentParser{
         }
     }
 
+    // url 내부 html(body) 텍스트 추출 및 파싱
     public ParsedText parseFromUrl(String url){
         ParsedText parsedText = new ParsedText();
-        String urlText = this.extractText(url);
+        String urlText = this.extractTextFromUrl(url);
         String[] lines = urlText.split("\\R"); // 줄바꿈 기준
         int paragraphOrder = 1;
         List<String> paragraphLines = new ArrayList<>();

@@ -52,7 +52,7 @@ public class DocumentParsingService {
     }
 
     @Transactional
-    public void parseAndSaveUrlText(Long documentId, String url){
+    public void parseAndSaveUrlHtml(Long documentId, String url){
         // 영속성 보장을 위해 document 재조회
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new IllegalArgumentException("documentId for summarizing not found ::: documentId : " + documentId));

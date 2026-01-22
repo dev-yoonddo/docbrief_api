@@ -3,6 +3,7 @@ package com.docbrief.document.controller;
 import com.docbrief.document.domain.DocumentStatus;
 import com.docbrief.document.dto.api.DocumentCreateResponse;
 import com.docbrief.document.dto.api.DocumentStatusResponse;
+import com.docbrief.document.dto.internal.SummaryInternalRequest;
 import com.docbrief.document.service.DocumentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/documents")
-@AllArgsConstructor
 @CrossOrigin(origins="http://localhost:5173")
+@AllArgsConstructor
+@RequestMapping("/documents")
 public class DocumentController {
 
     private final DocumentService documentService;
@@ -29,11 +30,9 @@ public class DocumentController {
         return ResponseEntity.ok(new DocumentStatusResponse(id, status));
     }
 
-    @PostMapping("/{id}/parse")
-    // TODO:규격 협의 후 최종 반환타입 변경
-    public ResponseEntity<?> parsDocument(@PathVariable Long id, @RequestParam("file") MultipartFile file){
-        String result = documentService.processDocument(id, file);
-        return ResponseEntity.ok(result);
+    @PostMapping("/{id}/process")
+    public SummaryInternalRequest process(@PathVariable Long id, @RequestParam("file") MultipartFile file){
+        return documentService.buildSummaryRequest(id, file);
     }
 
 }

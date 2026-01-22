@@ -35,7 +35,7 @@ public class DocumentParsingService {
 
         // 최초/실패 후 재파싱하는 경우
         contentRepository.deleteByDocumentId(document.getDocumentId());
-        documentStatusService.updateDocumentStatus(documentId, DocumentStatus.EXTRACTING);
+        documentStatusService.updateDocumentStatus(document, DocumentStatus.EXTRACTING);
 
         try(InputStream inputStream = file.getInputStream()) {
             DocumentType type = typeResolver.resolveFromFileName(file.getOriginalFilename());
@@ -43,10 +43,10 @@ public class DocumentParsingService {
             ParsedText parsedText = parser.parse(inputStream);
 
             saveParsedText(document, parsedText);
-            documentStatusService.updateDocumentStatus(documentId, DocumentStatus.EXTRACTED);
+            documentStatusService.updateDocumentStatus(document, DocumentStatus.EXTRACTED);
 
         }catch (Exception e){
-            documentStatusService.updateDocumentStatus(documentId, DocumentStatus.FAILED);
+            documentStatusService.markFailed(document.getDocumentId(), DocumentStatus.FAILED);
             throw new RuntimeException("failed to parsing", e);
         }
     }
@@ -72,5 +72,4 @@ public class DocumentParsingService {
             }
         }
     }
-
 }

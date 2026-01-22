@@ -3,6 +3,7 @@ package com.docbrief.document.service;
 import com.docbrief.document.domain.Document;
 import com.docbrief.document.domain.DocumentStatus;
 import com.docbrief.document.domain.DocumentType;
+import com.docbrief.document.dto.internal.SummaryInternalRequest;
 import com.docbrief.document.repository.DocumentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,43 +37,30 @@ public class DocumentService {
         return document.getStatus();
     }
 
-    public String processDocument(Long documentId, MultipartFile file){
+    public SummaryInternalRequest buildSummaryRequest(Long documentId, MultipartFile file){
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new IllegalArgumentException("documentId for processing not found ::: documentId : " + documentId));
         DocumentStatus status = document.getStatus();
-
         switch(status) {
             case CREATED:
             case FAILED:
                 documentParsingService.parseAndSaveDocument(documentId, file);
-                return summarizeDocument(documentId);
+                break;
             case EXTRACTING:
-                return "this document is currently being extracted.";
+                throw new IllegalStateException("this document is currently being extracted.");
             case EXTRACTED:
-                return summarizeDocument(documentId);
+                break;
             case SUMMARIZING:
-                return "this document is currently being summarized.";
+                throw new IllegalStateException("this document is currently being summarized.");
             case SUMMARIZED:
-                return summaryRequestService.requestSummary(document);
+                break;
             default:
                 throw new IllegalStateException("unknown document status ::: status : " + status);
         }
-    }
 
-    public String summarizeDocument(Long documentId) {
-        // 상태값 업데이트 시 document 엔티티의 영속이 분리될 수 있으므로 재조회
-        Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new IllegalArgumentException("documentId for summarizing not found ::: documentId : " + documentId));
-        documentStatusService.updateDocumentStatus(documentId, DocumentStatus.SUMMARIZING);
+        if (document.getStatus() != DocumentStatus.EXTRACTED){ throw new IllegalStateException("document is not ready for summarizing ::: documentStatus : " + document.getStatus());         }
 
-       try {
-            String summary = summaryRequestService.requestSummary(document);
-            documentStatusService.updateDocumentStatus(documentId, DocumentStatus.SUMMARIZED);
-            return summary;
-        } catch (Exception e) {
-            documentStatusService.updateDocumentStatus(documentId, DocumentStatus.FAILED);
-            throw e;
-        }
+        return summaryRequestService.buildSummaryInternalRequest(document);
     }
 
 }

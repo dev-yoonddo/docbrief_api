@@ -51,6 +51,30 @@ public class DocumentParsingService {
         }
     }
 
+    @Transactional
+    public void parseAndSaveUrlText(Long documentId, String url){
+        // 영속성 보장을 위해 document 재조회
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new IllegalArgumentException("documentId for summarizing not found ::: documentId : " + documentId));
+
+        // 최초/실패 후 재파싱하는 경우
+        contentRepository.deleteByDocumentId(document.getDocumentId());
+        documentStatusService.updateDocumentStatus(documentId, DocumentStatus.EXTRACTING);
+
+        try{
+            DocumentType type = DocumentType.URL;
+            DocumentParser parser = parserFactory.getParser(type);
+            ParsedText parsedText = parser.parseFromUrl(url);
+
+            saveParsedText(document, parsedText);
+            documentStatusService.updateDocumentStatus(documentId, DocumentStatus.EXTRACTED);
+
+        }catch (Exception e){
+            documentStatusService.updateDocumentStatus(documentId, DocumentStatus.FAILED);
+            throw new RuntimeException("failed to parsing", e);
+        }
+    }
+
     // 부모의 transaction을 그대로 사용(기존 트랜잭션 전파)
     @Transactional
     private void saveParsedText(Document document, ParsedText parsedText){

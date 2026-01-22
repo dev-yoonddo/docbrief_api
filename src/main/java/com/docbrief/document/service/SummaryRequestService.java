@@ -9,8 +9,9 @@ import com.docbrief.document.repository.DocumentContentRepository;
 import com.docbrief.document.repository.DocumentParagraphRepository;
 import com.docbrief.document.repository.DocumentRepository;
 import com.docbrief.document.repository.DocumentSentenceRepository;
+import com.docbrief.summary.domain.SummaryRequest;
 import com.docbrief.summary.service.SummaryProcessor;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.docbrief.summary.service.UrlDocumentParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class SummaryRequestService {
 
     private final ObjectMapper objectMapper;
     private final SummaryProcessor summaryProcessor;
+    private final UrlDocumentParser urlDocumentParser;
 
     // TODO:규격 협의 후 최종 반환타입 변경
     public String requestSummary(Document document) {
@@ -75,6 +77,10 @@ public class SummaryRequestService {
         // return analysisClient.summarize(requestJson);
         return summaryProcessor.startSummaryEngine(request);
     }
-
+    public String requestSummaryByUrl(SummaryRequest request){
+        String url = request.getUrl();
+        String urlText = urlDocumentParser.extractText(url);
+        return urlText;
+    }
 
 }

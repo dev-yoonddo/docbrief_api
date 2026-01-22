@@ -31,9 +31,13 @@ public class DocumentController {
 
     @PostMapping("/{id}/parse")
     // TODO:규격 협의 후 최종 반환타입 변경
-    public ResponseEntity<?> parsDocument(@PathVariable Long id, @RequestParam("file") MultipartFile file){
+    public ResponseEntity<?> parsDocument(@PathVariable Long id,  @RequestParam("file") MultipartFile file){
         String result = documentService.processDocument(id, file);
         return ResponseEntity.ok(result);
     }
-
+    @PostMapping("/{id}/url/parse")
+    public ResponseEntity<?> parsDocument(@PathVariable Long id,  @RequestParam("url") String url){
+        String result = documentService.processUrlParsing(id, url);
+        return ResponseEntity.ok(result);
+    }
 }

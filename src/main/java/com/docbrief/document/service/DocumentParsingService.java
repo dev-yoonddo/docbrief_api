@@ -62,11 +62,11 @@ public class DocumentParsingService {
         documentStatusService.updateDocumentStatus(document, DocumentStatus.EXTRACTING);
 
         try{
-            DocumentType type = DocumentType.URL;
+            DocumentType type = DocumentType.HTML;
             DocumentParser parser = parserFactory.getParser(type);
             ParsedText parsedText = parser.parseFromUrl(url);
 
-            saveParsedText(document, parsedText);
+            this.saveParsedText(document, parsedText);
             documentStatusService.updateDocumentStatus(document, DocumentStatus.EXTRACTED);
 
         }catch (Exception e){

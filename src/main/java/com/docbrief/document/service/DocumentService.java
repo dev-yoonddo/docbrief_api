@@ -33,7 +33,7 @@ public class DocumentService {
     public Long createFromUrl(String url){
         if (url == null || url.isBlank()) { throw new IllegalArgumentException("url is required"); }
 
-        DocumentType type = DocumentType.URL;
+        DocumentType type = DocumentType.HTML;
         Document document = new Document(url, type);
         documentRepository.save(document);
         return document.getDocumentId();
@@ -80,6 +80,7 @@ public class DocumentService {
             case CREATED:
             case FAILED:
                 documentParsingService.parseAndSaveUrlText(documentId, url);
+                break;
             case EXTRACTING:
                 throw new IllegalStateException("this document is currently being extracted.");
             case EXTRACTED:

@@ -5,7 +5,7 @@ public enum DocumentType {
     DOCX,
     HWPX,
     TXT,
-    URL;
+    HTML;
 
     public static DocumentType fromFileName(String fileName){
         String lower = fileName.toLowerCase();

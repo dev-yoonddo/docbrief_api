@@ -6,10 +6,13 @@ import com.docbrief.document.dto.api.DocumentStatusResponse;
 import com.docbrief.document.dto.internal.SummaryInternalRequest;
 import com.docbrief.document.service.DocumentService;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@Log4j2
 @RestController
 @CrossOrigin(origins="http://localhost:5173")
 @AllArgsConstructor
@@ -35,9 +38,12 @@ public class DocumentController {
         return documentService.processDocumentParsing(id, file);
     }
 
-    @PostMapping("/{id}/url/parse")
-    public SummaryInternalRequest parsDocument(@PathVariable Long id,  @RequestParam("url") String url){
-        return documentService.processUrlParsing(id, url);
+    @PostMapping("/{id}/url/process")
+    public SummaryInternalRequest processFromUrl(@PathVariable Long id,  @RequestParam("url") String url){
+        SummaryInternalRequest request = documentService.processUrlParsing(id, url);
+
+        log.info("dddddd");
+        return request;
     }
 
     @GetMapping("/{id}/status")

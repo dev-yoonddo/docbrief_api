@@ -86,7 +86,7 @@ public class UrlDocumentParser implements DocumentParser{
 
     @Override
     public DocumentType getSupportedType() {
-        return DocumentType.URL;
+        return DocumentType.HTML;
     }
 
     @Override

@@ -30,6 +30,15 @@ public class DocumentService {
         return document.getDocumentId();
     }
 
+    public Long createFromUrl(String url){
+        if (url == null || url.isBlank()) { throw new IllegalArgumentException("url is required"); }
+
+        DocumentType type = DocumentType.URL;
+        Document document = new Document(url, type);
+        documentRepository.save(document);
+        return document.getDocumentId();
+    }
+
     @Transactional(readOnly = true)
     public DocumentStatus getStatus(Long documentId){
         Document document = documentRepository.findById(documentId)
@@ -37,7 +46,7 @@ public class DocumentService {
         return document.getStatus();
     }
 
-    public SummaryInternalRequest buildSummaryRequest(Long documentId, MultipartFile file){
+    public SummaryInternalRequest processDocumentParsing(Long documentId, MultipartFile file){
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new IllegalArgumentException("documentId for processing not found ::: documentId : " + documentId));
         DocumentStatus status = document.getStatus();
@@ -62,27 +71,26 @@ public class DocumentService {
 
         return summaryRequestService.buildSummaryInternalRequest(document);
     }
-    public String processUrlParsing(Long documentId, String url){
+
+    public SummaryInternalRequest processUrlParsing(Long documentId, String url){
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new IllegalArgumentException("documentId for processing not found ::: documentId : " + documentId));
         DocumentStatus status = document.getStatus();
-
         switch(status) {
             case CREATED:
             case FAILED:
                 documentParsingService.parseAndSaveUrlText(documentId, url);
-                return summarizeDocument(documentId);
             case EXTRACTING:
-                return "this document is currently being extracted.";
+                throw new IllegalStateException("this document is currently being extracted.");
             case EXTRACTED:
-                return summarizeDocument(documentId);
             case SUMMARIZING:
-                return "this document is currently being summarized.";
+                throw new IllegalStateException("this document is currently being summarized.");
             case SUMMARIZED:
-                return summaryRequestService.requestSummary(document);
+                break;
             default:
                 throw new IllegalStateException("unknown document status ::: status : " + status);
         }
+        return summaryRequestService.buildSummaryInternalRequest(document);
     }
 
 }

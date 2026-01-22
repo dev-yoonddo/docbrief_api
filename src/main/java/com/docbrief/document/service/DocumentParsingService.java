@@ -46,7 +46,7 @@ public class DocumentParsingService {
             documentStatusService.updateDocumentStatus(document, DocumentStatus.EXTRACTED);
 
         }catch (Exception e){
-            documentStatusService.markFailed(document.getDocumentId(), DocumentStatus.FAILED);
+            documentStatusService.markFailed(document.getDocumentId());
             throw new RuntimeException("failed to parsing", e);
         }
     }
@@ -59,7 +59,7 @@ public class DocumentParsingService {
 
         // 최초/실패 후 재파싱하는 경우
         contentRepository.deleteByDocumentId(document.getDocumentId());
-        documentStatusService.updateDocumentStatus(documentId, DocumentStatus.EXTRACTING);
+        documentStatusService.updateDocumentStatus(document, DocumentStatus.EXTRACTING);
 
         try{
             DocumentType type = DocumentType.URL;
@@ -67,10 +67,10 @@ public class DocumentParsingService {
             ParsedText parsedText = parser.parseFromUrl(url);
 
             saveParsedText(document, parsedText);
-            documentStatusService.updateDocumentStatus(documentId, DocumentStatus.EXTRACTED);
+            documentStatusService.updateDocumentStatus(document, DocumentStatus.EXTRACTED);
 
         }catch (Exception e){
-            documentStatusService.updateDocumentStatus(documentId, DocumentStatus.FAILED);
+            documentStatusService.markFailed(documentId);
             throw new RuntimeException("failed to parsing", e);
         }
     }

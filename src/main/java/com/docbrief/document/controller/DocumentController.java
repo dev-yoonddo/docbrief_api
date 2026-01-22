@@ -3,6 +3,7 @@ package com.docbrief.document.controller;
 import com.docbrief.document.domain.DocumentStatus;
 import com.docbrief.document.dto.api.DocumentCreateResponse;
 import com.docbrief.document.dto.api.DocumentStatusResponse;
+import com.docbrief.document.dto.internal.SummaryInternalRequest;
 import com.docbrief.document.service.DocumentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,19 +24,25 @@ public class DocumentController {
         return ResponseEntity.ok(new DocumentCreateResponse(documentId));
     }
 
-    @GetMapping("/{id}/status")
-    public ResponseEntity<DocumentStatusResponse> getDocumentStatus(@PathVariable Long id){
-        DocumentStatus status = documentService.getStatus(id);
-        return ResponseEntity.ok(new DocumentStatusResponse(id, status));
+    @PostMapping("/from-url")
+    public ResponseEntity<DocumentCreateResponse> createFromUrl(@RequestParam("url") String url){
+        Long documentId = documentService.createFromUrl(url);
+        return ResponseEntity.ok(new DocumentCreateResponse(documentId));
     }
 
     @PostMapping("/{id}/process")
     public SummaryInternalRequest process(@PathVariable Long id, @RequestParam("file") MultipartFile file){
-        return documentService.buildSummaryRequest(id, file);
+        return documentService.processDocumentParsing(id, file);
     }
+
     @PostMapping("/{id}/url/parse")
-    public ResponseEntity<?> parsDocument(@PathVariable Long id,  @RequestParam("url") String url){
-        String result = documentService.processUrlParsing(id, url);
-        return ResponseEntity.ok(result);
+    public SummaryInternalRequest parsDocument(@PathVariable Long id,  @RequestParam("url") String url){
+        return documentService.processUrlParsing(id, url);
+    }
+
+    @GetMapping("/{id}/status")
+    public ResponseEntity<DocumentStatusResponse> getDocumentStatus(@PathVariable Long id){
+        DocumentStatus status = documentService.getStatus(id);
+        return ResponseEntity.ok(new DocumentStatusResponse(id, status));
     }
 }

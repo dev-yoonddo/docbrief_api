@@ -21,7 +21,7 @@ public class DocumentStatusService {
 
     // 호출 메서드에서 예외가 발생해도 상태값을 업데이트를 하기 위해 트랜잭션 분리
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = {})
-    public void markFailed(Long documentId, DocumentStatus status) {
+    public void markFailed(Long documentId) {
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new IllegalArgumentException("documentId for update status not found ::: documentId : " + documentId));
         document.updateStatus(DocumentStatus.FAILED);

@@ -3,7 +3,6 @@ package com.docbrief.document.controller;
 import com.docbrief.document.domain.DocumentStatus;
 import com.docbrief.document.dto.api.DocumentCreateResponse;
 import com.docbrief.document.dto.api.DocumentStatusResponse;
-import com.docbrief.document.dto.internal.SummaryInternalRequest;
 import com.docbrief.document.service.DocumentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,5 +33,9 @@ public class DocumentController {
     public SummaryInternalRequest process(@PathVariable Long id, @RequestParam("file") MultipartFile file){
         return documentService.buildSummaryRequest(id, file);
     }
-
+    @PostMapping("/{id}/url/parse")
+    public ResponseEntity<?> parsDocument(@PathVariable Long id,  @RequestParam("url") String url){
+        String result = documentService.processUrlParsing(id, url);
+        return ResponseEntity.ok(result);
+    }
 }

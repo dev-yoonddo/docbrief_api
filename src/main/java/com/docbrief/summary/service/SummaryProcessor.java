@@ -116,7 +116,7 @@ public class SummaryProcessor {
         return requestJson;
     }
     /*
-    * @param :
+    * @param : Long
     * Summary -> JSON 파싱
     * */
     public SummaryResponse getSummaryResult(Long jobId) {

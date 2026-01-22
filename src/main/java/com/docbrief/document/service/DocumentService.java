@@ -62,5 +62,27 @@ public class DocumentService {
 
         return summaryRequestService.buildSummaryInternalRequest(document);
     }
+    public String processUrlParsing(Long documentId, String url){
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new IllegalArgumentException("documentId for processing not found ::: documentId : " + documentId));
+        DocumentStatus status = document.getStatus();
+
+        switch(status) {
+            case CREATED:
+            case FAILED:
+                documentParsingService.parseAndSaveUrlText(documentId, url);
+                return summarizeDocument(documentId);
+            case EXTRACTING:
+                return "this document is currently being extracted.";
+            case EXTRACTED:
+                return summarizeDocument(documentId);
+            case SUMMARIZING:
+                return "this document is currently being summarized.";
+            case SUMMARIZED:
+                return summaryRequestService.requestSummary(document);
+            default:
+                throw new IllegalStateException("unknown document status ::: status : " + status);
+        }
+    }
 
 }

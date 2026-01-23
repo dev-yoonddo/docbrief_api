@@ -2,6 +2,7 @@ package com.docbrief.document.parser;
 
 import com.docbrief.common.DocumentParsingException;
 import com.docbrief.document.domain.DocumentType;
+import com.docbrief.document.text.SentenceSplitter;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -65,7 +66,7 @@ public class TxtDocumentParser implements DocumentParser{
 
         int sentenceOrder = 1;
         for (String line : lines) {
-            String[] sentences = splitToSentences(line);
+            String[] sentences = SentenceSplitter.splitToSentences(line);
             for (String sentence : sentences) {
                 paragraph.addSentence(new ParsedSentence(sentenceOrder++, sentence.trim()));
             }
@@ -74,11 +75,4 @@ public class TxtDocumentParser implements DocumentParser{
         return paragraph;
     }
 
-    private String[] splitToSentences(String text) {
-        // 번호, 로마자, 괄호 번호
-        if (text.matches("^(\\d+|[IVX]+|\\([0-9]+\\))\\.\\s+.*")) {
-            return new String[]{text};
-        }
-        return text.split("(?<=[.!?])\\s+");
-    }
 }

@@ -2,6 +2,7 @@ package com.docbrief.document.parser;
 
 import com.docbrief.common.DocumentParsingException;
 import com.docbrief.document.domain.DocumentType;
+import com.docbrief.document.text.SentenceSplitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,7 @@ public class PdfDocumentParser implements DocumentParser {
                 ParsedParagraph paragraph = new ParsedParagraph(paragraphOrder++);
                 int sentenceOrder = 1;
 
-                for (String sentence : splitToSentences(block)) {
+                for (String sentence : SentenceSplitter.splitToSentences(block)) {
                     if (sentence.isBlank()) continue;
                     paragraph.addSentence(new ParsedSentence(sentenceOrder++, sentence.trim()));
                 }

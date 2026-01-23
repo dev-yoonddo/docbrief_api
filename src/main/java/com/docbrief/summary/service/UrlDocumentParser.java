@@ -5,15 +5,13 @@ import com.docbrief.document.parser.DocumentParser;
 import com.docbrief.document.parser.ParsedParagraph;
 import com.docbrief.document.parser.ParsedSentence;
 import com.docbrief.document.parser.ParsedText;
+import com.docbrief.document.text.SentenceSplitter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,21 +66,13 @@ public class UrlDocumentParser implements DocumentParser{
 
         int sentenceOrder = 1;
         for (String line : lines) {
-            String[] sentences = splitToSentences(line);
+            String[] sentences = SentenceSplitter.splitToSentences(line);
             for (String sentence : sentences) {
                 paragraph.addSentence(new ParsedSentence(sentenceOrder++, sentence.trim()));
             }
         }
 
         return paragraph;
-    }
-
-    private String[] splitToSentences(String text) {
-        // 번호, 로마자, 괄호 번호
-        if (text.matches("^(\\d+|[IVX]+|\\([0-9]+\\))\\.\\s+.*")) {
-            return new String[]{text};
-        }
-        return text.split("(?<=[.!?])\\s+");
     }
 
     @Override

@@ -35,7 +35,7 @@ public class DocxDocumentParser implements DocumentParser {
                 ParsedParagraph paragraph = new ParsedParagraph(paragraphOrder++);
 
                 int sentenceOrder = 1;
-                String[] sentences = splitToSentences(text);
+                String[] sentences = SentenceSplitter.splitToSentences(text);
 
                 for (String sentence : sentences) {
                     if (sentence.isBlank()) continue;
@@ -51,12 +51,5 @@ public class DocxDocumentParser implements DocumentParser {
         return parsedText;
     }
 
-    private String[] splitToSentences(String text) {
-        // 번호, 로마자, 괄호 번호
-        if (text.matches("^(\\d+|[IVX]+|\\([0-9]+\\))\\.\\s+.*")) {
-            return new String[]{text};
-        }
-        return text.split("(?<=[.!?])\\s+");
-    }
 }
 

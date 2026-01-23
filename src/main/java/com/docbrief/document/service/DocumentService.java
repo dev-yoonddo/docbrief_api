@@ -1,5 +1,8 @@
 package com.docbrief.document.service;
 
+import com.docbrief.common.InvalidDocumentStatusException;
+import com.docbrief.common.ResourceNotFoundException;
+import com.docbrief.common.DocumentResourceException;
 import com.docbrief.document.domain.Document;
 import com.docbrief.document.domain.DocumentStatus;
 import com.docbrief.document.domain.DocumentType;
@@ -21,8 +24,8 @@ public class DocumentService {
     private final DocumentRepository documentRepository;
 
     public Long create(MultipartFile file){
-        if(file == null || file.isEmpty()) { throw new IllegalArgumentException("file is required"); }
-        if(file.getOriginalFilename() == null) { throw new IllegalArgumentException("invalid file name"); }
+        if(file == null || file.isEmpty()) { throw new DocumentResourceException("파일 업로드가 필요합니다."); }
+        if(file.getOriginalFilename() == null) { throw new DocumentResourceException("파일명이 올바르지 않습니다."); }
 
         DocumentType type = DocumentType.fromFileName(file.getOriginalFilename());
         Document document = new Document(file.getOriginalFilename(), type);
@@ -31,7 +34,7 @@ public class DocumentService {
     }
 
     public Long createFromUrl(String url){
-        if (url == null || url.isBlank()) { throw new IllegalArgumentException("url is required"); }
+        if (url == null || url.isBlank()) { throw new DocumentResourceException("Url 입력이 필요합니다."); }
 
         DocumentType type = DocumentType.HTML;
         Document document = new Document(url, type);
@@ -42,13 +45,13 @@ public class DocumentService {
     @Transactional(readOnly = true)
     public DocumentStatus getStatus(Long documentId){
         Document document = documentRepository.findById(documentId)
-            .orElseThrow(() -> new IllegalArgumentException("documentId for getStatus not found ::: documentId : " + documentId));
+            .orElseThrow(() -> new ResourceNotFoundException(documentId));
         return document.getStatus();
     }
 
     public SummaryInternalRequest processDocumentParsing(Long documentId, MultipartFile file){
         Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new IllegalArgumentException("documentId for processing not found ::: documentId : " + documentId));
+                .orElseThrow(() -> new ResourceNotFoundException(documentId));
         DocumentStatus status = document.getStatus();
         switch(status) {
             case CREATED:
@@ -56,25 +59,25 @@ public class DocumentService {
                 documentParsingService.parseAndSaveDocument(documentId, file);
                 break;
             case EXTRACTING:
-                throw new IllegalStateException("this document is currently being extracted.");
+                throw new InvalidDocumentStatusException("해당 문서는 이미 파싱중입니다.");
             case EXTRACTED:
                 break;
             case SUMMARIZING:
-                throw new IllegalStateException("this document is currently being summarized.");
+                throw new InvalidDocumentStatusException("해당 문서는 이미 요약중입니다.");
             case SUMMARIZED:
                 break;
             default:
-                throw new IllegalStateException("unknown document status ::: status : " + status);
+                throw new InvalidDocumentStatusException(status);
         }
 
-        if (document.getStatus() != DocumentStatus.EXTRACTED){ throw new IllegalStateException("document is not ready for summarizing ::: documentStatus : " + document.getStatus());         }
+        if (document.getStatus() != DocumentStatus.EXTRACTED){ throw new InvalidDocumentStatusException(document.getStatus());         }
 
         return summaryRequestService.buildSummaryInternalRequest(document);
     }
 
     public SummaryInternalRequest processUrlParsing(Long documentId, String url){
         Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new IllegalArgumentException("documentId for processing not found ::: documentId : " + documentId));
+                .orElseThrow(() -> new ResourceNotFoundException(documentId));
         DocumentStatus status = document.getStatus();
         switch(status) {
             case CREATED:
@@ -82,14 +85,14 @@ public class DocumentService {
                 documentParsingService.parseAndSaveUrlHtml(documentId, url);
                 break;
             case EXTRACTING:
-                throw new IllegalStateException("this document is currently being extracted.");
+                throw new InvalidDocumentStatusException("해당 문서는 이미 파싱중입니다.");
             case EXTRACTED:
             case SUMMARIZING:
-                throw new IllegalStateException("this document is currently being summarized.");
+                throw new InvalidDocumentStatusException("해당 문서는 이미 요약중입니다.");
             case SUMMARIZED:
                 break;
             default:
-                throw new IllegalStateException("unknown document status ::: status : " + status);
+                throw new InvalidDocumentStatusException(status);
         }
         return summaryRequestService.buildSummaryInternalRequest(document);
     }

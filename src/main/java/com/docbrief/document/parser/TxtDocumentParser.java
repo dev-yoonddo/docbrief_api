@@ -1,5 +1,6 @@
 package com.docbrief.document.parser;
 
+import com.docbrief.common.DocumentParsingException;
 import com.docbrief.document.domain.DocumentType;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,7 @@ public class TxtDocumentParser implements DocumentParser{
     public DocumentType getSupportedType() { return DocumentType.TXT; }
 
     @Override
-    public ParsedText parse(InputStream inputStream) throws IOException {
+    public ParsedText parse(InputStream inputStream){
         ParsedText parsedText = new ParsedText();
 
         try(BufferedReader reader
@@ -52,7 +53,7 @@ public class TxtDocumentParser implements DocumentParser{
             }
 
         }catch(IOException ioe){
-            throw new RuntimeException("failed to parsing txt File", ioe);
+            throw new DocumentParsingException();
         }
 
         return parsedText;

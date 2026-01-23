@@ -1,5 +1,6 @@
 package com.docbrief.document.parser;
 
+import com.docbrief.common.UnsupportedDocumentTypeException;
 import com.docbrief.document.domain.DocumentType;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,7 @@ public class ParserFactory {
     public DocumentParser getParser(DocumentType type) {
         DocumentParser parser = parserMap.get(type);
         if(parser == null){
-            throw new IllegalArgumentException("no parser registered for type ::: type : " + type);
+            throw new UnsupportedDocumentTypeException(type);
         }
         return parser;
    }

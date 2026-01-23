@@ -1,5 +1,7 @@
 package com.docbrief.document.service;
 
+import com.docbrief.common.DocumentParsingException;
+import com.docbrief.common.ResourceNotFoundException;
 import com.docbrief.document.domain.*;
 import com.docbrief.document.parser.*;
 import com.docbrief.document.repository.DocumentContentRepository;
@@ -7,12 +9,14 @@ import com.docbrief.document.repository.DocumentParagraphRepository;
 import com.docbrief.document.repository.DocumentRepository;
 import com.docbrief.document.repository.DocumentSentenceRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class DocumentParsingService {
@@ -31,7 +35,7 @@ public class DocumentParsingService {
     public void parseAndSaveDocument(Long documentId, MultipartFile file){
         // 영속성 보장을 위해 document 재조회
         Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new IllegalArgumentException("documentId for summarizing not found ::: documentId : " + documentId));
+                .orElseThrow(() -> new ResourceNotFoundException(documentId));
 
         // 최초/실패 후 재파싱하는 경우
         contentRepository.deleteByDocumentId(document.getDocumentId());
@@ -46,8 +50,9 @@ public class DocumentParsingService {
             documentStatusService.updateDocumentStatus(document, DocumentStatus.EXTRACTED);
 
         }catch (Exception e){
+            log.error("DocumentParsingException", e);
             documentStatusService.markFailed(document.getDocumentId());
-            throw new RuntimeException("failed to parsing", e);
+            throw new DocumentParsingException();
         }
     }
 
@@ -55,7 +60,7 @@ public class DocumentParsingService {
     public void parseAndSaveUrlHtml(Long documentId, String url){
         // 영속성 보장을 위해 document 재조회
         Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new IllegalArgumentException("documentId for summarizing not found ::: documentId : " + documentId));
+                .orElseThrow(() -> new ResourceNotFoundException(documentId));
 
         // 최초/실패 후 재파싱하는 경우
         contentRepository.deleteByDocumentId(document.getDocumentId());
@@ -71,7 +76,7 @@ public class DocumentParsingService {
 
         }catch (Exception e){
             documentStatusService.markFailed(documentId);
-            throw new RuntimeException("failed to parsing", e);
+            throw new DocumentParsingException();
         }
     }
 

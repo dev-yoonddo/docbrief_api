@@ -1,5 +1,6 @@
 package com.docbrief.document.parser;
 
+import com.docbrief.common.DocumentParsingException;
 import com.docbrief.document.domain.DocumentType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -44,7 +45,7 @@ public class DocxDocumentParser implements DocumentParser {
                 parsedText.addParagraph(paragraph);
             }
         }catch (IOException ioe){
-            throw new RuntimeException("failed to parsing docx File", ioe);
+            throw new DocumentParsingException();
         }
 
         return parsedText;

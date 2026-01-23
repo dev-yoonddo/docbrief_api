@@ -1,5 +1,6 @@
 package com.docbrief.document.parser;
 
+import com.docbrief.common.DocumentParsingException;
 import com.docbrief.document.domain.DocumentType;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -41,7 +42,7 @@ public class PdfDocumentParser implements DocumentParser {
             }
 
         } catch (IOException e) {
-            throw new RuntimeException("failed to parsing pdf file", e);
+            throw new DocumentParsingException();
         }
 
         return parsedText;

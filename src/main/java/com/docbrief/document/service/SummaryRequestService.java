@@ -1,5 +1,6 @@
 package com.docbrief.document.service;
 
+import com.docbrief.common.ResourceNotFoundException;
 import com.docbrief.document.domain.Document;
 import com.docbrief.document.domain.DocumentContent;
 import com.docbrief.document.domain.DocumentParagraph;
@@ -36,7 +37,7 @@ public class SummaryRequestService {
         // 문서 원문 조회
         DocumentContent documentContent = contentRepository.findByDocumentId(documentId);
         if (documentContent == null) {
-            throw new IllegalStateException("document content for summary not found ::: documentId : " + documentId);
+            throw new ResourceNotFoundException(documentId);
         }
 
         // 문단 및 문장 조회

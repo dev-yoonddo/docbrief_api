@@ -1,5 +1,7 @@
 package com.docbrief.document.domain;
 
+import com.docbrief.common.UnsupportedDocumentTypeException;
+
 public enum DocumentType {
     PDF,
     DOCX,
@@ -15,7 +17,7 @@ public enum DocumentType {
         if(lower.endsWith(".hwpx")) { return HWPX; }
         if(lower.endsWith(".txt")) { return TXT; }
 
-        throw new IllegalArgumentException("unsupported file type : " + fileName);
+        throw new UnsupportedDocumentTypeException(fileName);
     }
 }
 

@@ -1,5 +1,6 @@
 package com.docbrief.document.service;
 
+import com.docbrief.common.ResourceNotFoundException;
 import com.docbrief.document.domain.Document;
 import com.docbrief.document.domain.DocumentStatus;
 import com.docbrief.document.repository.DocumentRepository;
@@ -23,7 +24,7 @@ public class DocumentStatusService {
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = {})
     public void markFailed(Long documentId) {
         Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new IllegalArgumentException("documentId for update status not found ::: documentId : " + documentId));
+                .orElseThrow(() -> new ResourceNotFoundException(documentId));
         document.updateStatus(DocumentStatus.FAILED);
     }
 

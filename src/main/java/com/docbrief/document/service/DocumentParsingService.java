@@ -50,7 +50,7 @@ public class DocumentParsingService {
             documentStatusService.updateDocumentStatus(document, DocumentStatus.EXTRACTED);
 
         }catch (Exception e){
-            log.error("DocumentParsingException", e);
+            log.error("DocumentParsingException occurred", e);
             documentStatusService.markFailed(document.getDocumentId());
             throw new DocumentParsingException();
         }

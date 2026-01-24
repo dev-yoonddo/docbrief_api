@@ -43,6 +43,39 @@ export async function processDocument(documentId, file) {
 }
 
 /**
+ * DocumentId 생성 (URL)
+ * POST /documents
+ */
+export async function uploadUrl(url) {
+
+  const res = await api.post("/documents/from-url",
+    null,
+    {
+    params: { url } // query param
+    }
+  );
+
+  return res.data.documentId;
+}
+
+/**
+ * Url 파싱
+ * POST /documents/{documentId}/url/process
+ */
+export async function processUrl(documentId, url) {
+
+  const res = await api.post(
+    `/documents/${documentId}/url/process`,
+    null,
+    {
+      params: { url } // query param
+    }
+  );
+
+  return res.data; // 👉 parsed DTO 전체
+}
+
+/**
  * 문서 요약
  * POST /{documentId}/summary
  */

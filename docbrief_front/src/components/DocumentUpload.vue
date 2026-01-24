@@ -40,6 +40,7 @@
       <div v-if="mode === 'url'" class="input-box">
         <input
           type="text"
+          v-model="url"
           placeholder="https://example.com/document"
         />
         <button class="primary" @click="loadAndParse">
@@ -66,7 +67,9 @@ import { ref, computed } from "vue";
 import {
   uploadDocument,
   processDocument,
-  summarizeDocument
+  summarizeDocument,
+  uploadUrl,
+  processUrl
 } from "../api/documentApi";
 
 /**
@@ -74,6 +77,7 @@ import {
  */
 const mode = ref("file"); // 'file' | 'url'
 const file = ref(null);
+const url = ref(null);
 const documentId = ref(null);
 const parseResult = ref(null);
 
@@ -110,12 +114,22 @@ async function uploadAndParse() {
 }
 
 /**
- * [URL 기준] (구조만 맞춰둠)
+ * [URL 기준]
  */
 async function loadAndParse() {
-  // TODO:
-  // 1. URL 기반 document 생성
-  // 2. process
-  // 3. summary
+    // 1. documentId 발급
+    documentId.value = await uploadUrl(url.value);
+
+    // 2. URL 내부 HTML 파싱 (/url/process)
+    const parseDto = await processUrl(documentId.value, url.value);
+
+    // 3. 요약 요청 (/{documentId}/summary)
+    const summary = await summarizeDocument(
+      documentId.value,
+      parseDto
+    );
+
+    // 4. 결과 표시
+    parseResult.value = summary;
 }
 </script>

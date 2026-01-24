@@ -46,6 +46,7 @@ public class SummaryProcessor {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         date = LocalDateTime.now();
         Instant start = Instant.now();
+        SummaryResponse response = new SummaryResponse();
 
         // 첫번째 요청 시작
         log.info("Gemini Request ::: {}", date.format(formatter));
@@ -95,14 +96,14 @@ public class SummaryProcessor {
             log.info(result);
             log.info("===============================================================");
 
-            SummaryResponse response = this.getSummaryResult(summaryResult.getJobId());
+            response = this.getSummaryResult(summaryResult.getJobId());
             log.info("AI결과 재파싱 !");
             log.info(response);
         }catch (Exception e){
             summaryJobService.setJobFailed(summaryJob.getJobId());
             throw new SummaryProcessingException(ErrorCode.SUMMARY_AI_REQUEST_ERROR, e);
         }
-        return result;
+        return response.getSummaryText();
     }
 
     /**

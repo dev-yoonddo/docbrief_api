@@ -45,10 +45,40 @@ public enum ErrorCode {
             "DOC-005",
             "문서 파싱 중 오류가 발생했습니다.",
             HttpStatus.INTERNAL_SERVER_ERROR
-    )
+    ),
 
     /*** 요약 ***/
-    ;
+    // JSON 변환 관련
+    SUMMARY_REQUEST_CONVERSION_ERROR(
+            "SUMMARY_001",
+            "요약 요청 데이터 변환에 실패했습니다.",
+            HttpStatus.INTERNAL_SERVER_ERROR
+    ),
+    SUMMARY_RESPONSE_CONVERSION_ERROR(
+            "SUMMARY_002",
+            "요약 결과 데이터 변환에 실패했습니다",
+            HttpStatus.INTERNAL_SERVER_ERROR
+    ),
+
+    // AI 호출 관련
+    SUMMARY_AI_REQUEST_ERROR("SUMMARY_003",
+            "AI 요약 요청에 실패했습니다.",
+            HttpStatus.INTERNAL_SERVER_ERROR
+    ),
+    SUMMARY_AI_RESPONSE_ERROR("SUMMARY_004",
+            "AI 요약 응답에 실패했습니다.",
+            HttpStatus.INTERNAL_SERVER_ERROR
+    ),
+    SUMMARY_AI_TIMEOUT("SUMMARY_005",
+            "AI 요약 타임아웃이 발생했습니다.",
+            HttpStatus.REQUEST_TIMEOUT
+    ),
+    SUMMARY_AI_RATE_LIMIT("SUMMARY_006",
+            "요약 요청이 많아 AI 호출 제한에 걸렸습니다.",
+            HttpStatus.TOO_MANY_REQUESTS
+    );
+
+
     private final String code;
     private final String message;
     private final HttpStatus status;

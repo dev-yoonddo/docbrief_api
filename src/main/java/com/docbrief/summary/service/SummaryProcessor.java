@@ -1,13 +1,13 @@
 package com.docbrief.summary.service;
 
+import com.docbrief.common.ErrorCode;
 import com.docbrief.common.SummaryProcessingException;
 import com.docbrief.document.dto.internal.SummaryInternalRequest;
-import com.docbrief.document.service.SummaryRequestService;
 import com.docbrief.summary.ai.AiClient;
-import com.docbrief.summary.ai.AiResponse;
 import com.docbrief.summary.ai.PromptBuilder;
-import com.docbrief.summary.domain.*;
-import com.docbrief.summary.repository.SummaryJobRepository;
+import com.docbrief.summary.domain.SummaryJob;
+import com.docbrief.summary.domain.SummaryResponse;
+import com.docbrief.summary.domain.SummaryResult;
 import com.docbrief.summary.repository.SummaryResultRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,8 +19,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Log4j2
 @Service
@@ -101,11 +100,7 @@ public class SummaryProcessor {
             log.info(response);
         }catch (Exception e){
             summaryJobService.setJobFailed(summaryJob.getJobId());
-            throw new SummaryProcessingException(
-                    ErrorCode.SUMMARY_AI_ERROR,
-                    ErrorCode.SUMMARY_AI_ERROR.getMessage(),
-                    e
-            );
+            throw new SummaryProcessingException(ErrorCode.SUMMARY_AI_REQUEST_ERROR, e);
         }
         return result;
     }
@@ -122,7 +117,7 @@ public class SummaryProcessor {
         try{
             requestJson =  objectMapper.writeValueAsString(summaryRequest);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to seriallize summary request", e);
+            throw new SummaryProcessingException(ErrorCode.SUMMARY_REQUEST_CONVERSION_ERROR, e);
         }
         return requestJson;
     }
@@ -141,11 +136,7 @@ public class SummaryProcessor {
 
             return objectMapper.readValue(result.getContent(), SummaryResponse.class);
         } catch (JsonProcessingException e) {
-            throw new SummaryProcessingException(
-                    ErrorCode.SUMMARY_JSON_ERROR,
-                    "요약 결과 JSON 파싱 실패",
-                    e
-            );
+            throw new SummaryProcessingException(ErrorCode.SUMMARY_RESPONSE_CONVERSION_ERROR, e);
         }
     }
 }

@@ -1,19 +1,17 @@
 package com.docbrief.common;
 
-import com.docbrief.summary.domain.ErrorCode;
+import com.docbrief.document.domain.DocumentStatus;
 import lombok.Getter;
 
-@Getter
-public class SummaryProcessingException extends RuntimeException {
-    private final ErrorCode errorCode;
+public class SummaryProcessingException extends BusinessException {
 
-    public SummaryProcessingException(
-            ErrorCode errorCode,
-            String message,
-            Throwable cause
-    ) {
-        super(message, cause);
-        this.errorCode = errorCode;
+    public SummaryProcessingException(ErrorCode errorCode, Throwable cause) {
+        super(errorCode);
+        initCause(cause);
     }
 
+    public SummaryProcessingException(ErrorCode errorCode, String message, Throwable cause) {
+        super(errorCode, message);
+        initCause(cause);
+    }
 }

@@ -13,6 +13,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class SummaryController {
     public SummaryProcessor summaryProcessor;
 
+
+    /**
+     * AI 요약 요청
+     *
+     * @param id, type, summaryInternalRequest
+     * @return String
+     */
     @PostMapping("/{id}/summary")
     public String process(@PathVariable Long id
             , @RequestParam("type") String type

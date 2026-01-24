@@ -72,7 +72,7 @@ export async function processUrl(documentId, url) {
     }
   );
 
-  return res.data; // 👉 parsed DTO 전체
+  return res.data; //  parsed DTO 전체
 }
 
 /**
@@ -93,6 +93,6 @@ export async function summarizeDocument(documentId, parseDto, type = "document")
     }
   );
 
-  return res.data; // 👉 String 요약 결과
+  return res.data; // tring 요약 결과
 }
 

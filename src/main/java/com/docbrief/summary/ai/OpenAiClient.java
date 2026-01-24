@@ -1,7 +1,6 @@
 package com.docbrief.summary.ai;
 
 import com.docbrief.summary.domain.SummaryJob;
-import com.docbrief.summary.service.SummaryJobService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -10,12 +9,12 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Component
-public class AiClient {
+public class OpenAiClient implements LlmClient {
 
     private final RestTemplate restTemplate;
     private final String apiKey;
 
-    public AiClient(
+    public OpenAiClient(
             RestTemplate restTemplate,
             @Value("${gemini.api.key}") String apiKey
     ) {

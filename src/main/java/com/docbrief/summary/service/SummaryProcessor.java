@@ -3,7 +3,7 @@ package com.docbrief.summary.service;
 import com.docbrief.common.ErrorCode;
 import com.docbrief.common.SummaryProcessingException;
 import com.docbrief.document.dto.internal.SummaryInternalRequest;
-import com.docbrief.summary.ai.AiClient;
+import com.docbrief.summary.ai.GeminiClient;
 import com.docbrief.summary.ai.PromptBuilder;
 import com.docbrief.summary.domain.SummaryJob;
 import com.docbrief.summary.domain.SummaryResponse;
@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 public class SummaryProcessor {
     private PromptBuilder promptBuilder;
-    private AiClient aiClient;
+    private GeminiClient geminiClient;
     private ObjectMapper objectMapper;
     private SummaryJobService summaryJobService;
     private SummaryResultService summaryResultService;
@@ -40,7 +40,7 @@ public class SummaryProcessor {
      * @return JSON 형태의 문자열
      * @throws RuntimeException AI 요청 실패 시
      */
-    public String startSummaryEngine(SummaryInternalRequest summaryRequest){
+    public SummaryResponse startSummaryEngine(SummaryInternalRequest summaryRequest){
         LocalDateTime date = null;
         String result = "";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -69,7 +69,7 @@ public class SummaryProcessor {
             summaryJobService.setJobProcessing(summaryJob.getJobId());
 
             // AI 요청
-            result = aiClient.summarize(
+            result = geminiClient.summarize(
                     prompt.toString()
                     , summaryJob
             );
@@ -103,7 +103,7 @@ public class SummaryProcessor {
             summaryJobService.setJobFailed(summaryJob.getJobId());
             throw new SummaryProcessingException(ErrorCode.SUMMARY_AI_REQUEST_ERROR, e);
         }
-        return response.getSummaryText();
+        return response;
     }
 
     /**

@@ -46,7 +46,7 @@
         />
         <button
           class="primary"
-          @click="uploadAndParse"
+          @click="loadAndParse"
           :disabled="!url || isLoading"
         >
           불러오기
@@ -182,7 +182,6 @@ function onFileChange(e) {
  * [파일 기준] 업로드 → 파싱 → 요약
  */
 async function uploadAndParse() {
-  isLoading.value = true;
 
   try {
     // 에러메시지 초기화
@@ -209,8 +208,42 @@ async function uploadAndParse() {
   }catch(e){
     handleError(e);
   } finally {
-    isLoading.value = false;
+    loadingStage.value = null;
   }
+}
+
+/**
+ * [URL 기준]
+ */
+async function loadAndParse() {
+
+    try{
+        // 에러메시지 초기화
+        errorMessage.value = null;
+
+        //상태 변경
+        loadingStage.value = "ANALYZE";
+
+        // 1. documentId 발급
+        documentId.value = await uploadUrl(mode.value, file.value, url.value);
+
+        // 2. URL 내부 HTML 파싱 (/url/process)
+        const parseDto = await processUrl(mode.value, documentId.value, file.value, url.value);
+
+        loadingStage.value = "SUMMARY";
+        // 3. 요약 요청 (/{documentId}/summary)
+        const summaryDto = await summarizeDocument(
+          documentId.value,
+          parseDto
+        );
+
+        // 4. 결과 표시
+        summaryResult.value = summaryDto;
+    }catch(e){
+        handleError(e);
+    } finally {
+        loadingStage.value = null;
+    }
 }
 
 /**

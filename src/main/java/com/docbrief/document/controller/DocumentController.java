@@ -6,7 +6,6 @@ import com.docbrief.document.dto.api.DocumentStatusResponse;
 import com.docbrief.document.dto.internal.SummaryInternalRequest;
 import com.docbrief.document.service.DocumentService;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,25 +21,19 @@ public class DocumentController {
     private final DocumentService documentService;
 
     @PostMapping
-    public ResponseEntity<DocumentCreateResponse> create(@RequestParam("file") MultipartFile file){
-        Long documentId = documentService.create(file);
-        return ResponseEntity.ok(new DocumentCreateResponse(documentId));
-    }
-
-    @PostMapping("/from-url")
-    public ResponseEntity<DocumentCreateResponse> createFromUrl(@RequestParam("url") String url){
-        Long documentId = documentService.createFromUrl(url);
+    public ResponseEntity<?> create(@RequestParam(value="mode") String mode,
+                                    @RequestParam(required = false, value="file") MultipartFile file,
+                                    @RequestParam(required = false, value="url") String url){
+        Long documentId = documentService.create(mode, file, url);
         return ResponseEntity.ok(new DocumentCreateResponse(documentId));
     }
 
     @PostMapping("/{id}/process")
-    public SummaryInternalRequest process(@PathVariable Long id, @RequestParam("file") MultipartFile file){
-        return documentService.processDocumentParsing(id, file);
-    }
-
-    @PostMapping("/{id}/url/process")
-    public SummaryInternalRequest processFromUrl(@PathVariable Long id,  @RequestParam("url") String url){
-        return documentService.processUrlParsing(id, url);
+    public SummaryInternalRequest process(@PathVariable Long id,
+                                     @RequestParam(value="mode") String mode,
+                                     @RequestParam(required = false, value="file") MultipartFile file,
+                                     @RequestParam(required = false, value="url") String url){
+        return documentService.processParsing(mode, id, file, url);
     }
 
     @GetMapping("/{id}/status")

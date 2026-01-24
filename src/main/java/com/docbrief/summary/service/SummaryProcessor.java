@@ -11,6 +11,7 @@ import com.docbrief.summary.ai.PromptBuilder;
 import com.docbrief.summary.domain.SummaryJob;
 import com.docbrief.summary.domain.SummaryResponse;
 import com.docbrief.summary.domain.SummaryResult;
+import com.docbrief.summary.domain.SummarySessionResponse;
 import com.docbrief.summary.repository.SummaryResultRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +46,7 @@ public class SummaryProcessor {
      * @return JSON 형태의 문자열
      * @throws RuntimeException AI 요청 실패 시
      */
-    public SummaryResponse startSummaryEngine(SummaryInternalRequest summaryRequest) {
+    public SummarySessionResponse startSummaryEngine(SummaryInternalRequest summaryRequest) {
 
         // 1. 문서 상태를 SUMMARIZING으로 업데이트
         int updated = documentRepository.updateStatusByDocumentId(
@@ -84,7 +85,9 @@ public class SummaryProcessor {
             summaryResult.setContent(result);
             summaryResultService.insertSummaryResult(summaryResult);
 
-            return getSummaryResult(summaryResult.getJobId());
+            SummaryResponse summaryResponse = new SummaryResponse();
+            summaryResponse = this.getSummaryResult(summaryResult.getJobId());
+            return new SummarySessionResponse(summaryJob.getJobId(), summaryResponse);
 
         } catch (Exception e) {
             // 실패 시 document 상태 및 job 처리

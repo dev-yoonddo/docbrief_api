@@ -2,7 +2,15 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "http://localhost:8080",
+  withCredentials: true
 });
+
+// 세션 초기화
+export async function initSession() {
+  const res = await api.get("/documents/session/init");
+  console.log("Session ID:", res.data);
+  return res.data;
+}
 
 /**
  * 문서 업로드
@@ -43,7 +51,7 @@ export async function processDocument(mode, documentId, file, url) {
     }
   );
 
-  return res.data; // 👉 parsed DTO 전체
+  return res.data; // parsed DTO 전체
 }
 
 /**
@@ -63,7 +71,8 @@ export async function summarizeDocument(documentId, parseDto, type) {
       },
     }
   );
-
-  return res.data; // tring 요약 결과
+    console.log("요약 결과 ::: res.data");
+    console.log(res.data);
+  return res.data; // String 요약 결과
 }
 

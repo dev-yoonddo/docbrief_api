@@ -1,13 +1,19 @@
 <template>
-  <div class="doc-brief">
-
+  <div v-if="!showArchive" class="doc-brief">
+    <!-- 보관함 버튼 -->
+    <button
+      class="archive-toggle fixed top-4 right-4 text-2xl"
+      @click="toggleArchive"
+      :title="showArchive ? '입력 영역으로 돌아가기' : '보관함 보기'"
+    >
+      📂
+    </button>
     <!-- 입력 영역 -->
     <section
       class="input-section"
       :class="{ compact: hasResult }"
     >
       <h2 class="title">DOC BRIEF</h2>
-
       <!-- 입력 방식 탭 -->
       <div class="input-tabs">
         <button
@@ -96,14 +102,54 @@
     </transition>
 
   </section>
+    <!-- 보관함 영역 -->
+    <section v-if="showArchive" class="archive-section">
+      <button class="archive-toggle back-button" @click="toggleArchive">⬅️ 입력 영역으로 돌아가기</button>
+
+      <h2 class="archive-title">요약 보관함</h2>
+
+      <div v-if="summaryResultList.length === 0" class="empty-text">
+        보관된 요약이 없습니다.
+      </div>
+
+      <transition-group name="fade-slide" tag="div" class="archive-cards">
+        <div
+          v-for="item in summaryResultList"
+          :key="item.jobId"
+          class="summary-card"
+        >
+          <div class="card-header">
+            <span class="job-id">Job ID: {{ item.jobId }}</span>
+            <span class="session-id">Session: {{ item.sessionId }}</span>
+          </div>
+
+          <p class="summary-text">{{ item.summaryResponse.summaryText }}</p>
+
+          <div class="highlights">
+            <span
+              v-for="(highlight, index) in item.summaryResponse.highlights"
+              :key="index"
+              :class="highlight.type === 'KEYWORD' ? 'keyword' : 'sentence'"
+            >
+              {{ highlight.value }}
+            </span>
+          </div>
+
+          <div class="violation">
+            {{ item.summaryResponse.violationReason }}
+          </div>
+        </div>
+      </transition-group>
+    </section>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import {
   uploadDocument,
   processDocument,
-  summarizeDocument
+  summarizeDocument,
+  initSession
 } from "../api/documentApi";
 
 /**
@@ -118,12 +164,25 @@ const errorMessage = ref(null);
 const summaryResult = ref(null);
 const loadingStage = ref(null);
 
+/*
+* 보관함 영역
+*/
+const showArchive = ref(false);
+const sessionId = ref(null);
+const summaryResultList = ref([]); // 세션별 요약 결과 저장
 
 
 /**
  * 결과 존재 여부 (input 영역 compact 처리용)
  */
 const hasResult = computed(() => !!summaryResult.value);
+
+/**
+ * 페이지 로드 시 세션 초기화
+ */
+onMounted(async () => {
+  sessionId.value = await initSession();
+});
 
 /*
 * 로딩 완료 여부/**
@@ -204,8 +263,14 @@ async function uploadAndParse() {
     mode.value
     );
 
+    // summary.sessionId와 현재 프론트 세션 ID 비교
+    if (summary.sessionId === sessionId.value) {
+      summaryResultList.value.push(summary); // 동일 세션이면 리스트에 저장
+    }
+    console.log("summaryResultList")
+    console.log(summaryResultList)
     // 4. 결과 표시
-    summaryResult.value = summary;
+    summaryResult.value = summary.summaryResponse;
   }catch(e){
     handleError(e);
   } finally {
@@ -233,14 +298,20 @@ async function loadAndParse() {
 
         loadingStage.value = "SUMMARY";
         // 3. 요약 요청 (/{documentId}/summary)
-        const summaryDto = await summarizeDocument(
+        const summary = await summarizeDocument(
           documentId.value,
           parseDto,
           mode.value
         );
 
+        // summary.sessionId와 현재 프론트 세션 ID 비교
+        if (summary.sessionId === sessionId.value) {
+          summaryResultList.value.push(summary); // 동일 세션이면 리스트에 저장
+        }
+        console.log("summaryResultList")
+        console.log(summaryResultList)
         // 4. 결과 표시
-        summaryResult.value = summaryDto;
+        summaryResult.value = summary.summaryResponse;
     }catch(e){
     console.log('오류왜남')
     console.log(e)
@@ -284,5 +355,13 @@ function switchMode(nextMode) {
 function resetSummary() {
   summaryResult.value = null;
   documentId.value = null;
+}
+
+/**
+ * 보관함 이동
+ */
+function toggleArchive() {
+    console.log(showArchive)
+    showArchive.value = !showArchive.value;
 }
 </script>

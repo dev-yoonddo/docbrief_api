@@ -354,3 +354,270 @@ button.secondary {
   color: white;
   cursor: pointer;
 }
+
+.doc-brief {
+  max-width: 680px;
+  margin: 60px auto;
+  padding: 34px;
+  border-radius: 20px;
+
+  background: linear-gradient(
+    145deg,
+    #f0f7ff,
+    #f5f3ff
+  );
+  box-shadow:
+    0 40px 80px rgba(80, 70, 180, 0.35),
+    0 18px 36px rgba(80, 70, 180, 0.28),
+    0 6px 14px rgba(80, 70, 180, 0.22);
+}
+
+/* 제목 */
+.title {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-bottom: 28px;
+  background: linear-gradient(
+    90deg,
+    #2563eb,
+    #7c3aed
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 탭 */
+.input-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.input-tabs button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #e0e7ff;
+  color: #3730a3;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.input-tabs button.active {
+  background: linear-gradient(
+    90deg,
+    #3b82f6,
+    #8b5cf6
+  );
+  color: #fff;
+  box-shadow: 0 8px 16px rgba(99, 102, 241, 0.35);
+}
+
+/* 입력 박스 */
+.input-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.input-box input[type="text"],
+.input-box input[type="file"] {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #c7d2fe;
+  font-size: 14px;
+  background: #ffffff;
+}
+
+/* 버튼 공통 */
+button.primary {
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  background: linear-gradient(
+    90deg,
+    #38bdf8,
+    #6366f1
+  );
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button.primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 파싱 액션 영역 */
+.action-box {
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  margin-bottom: 20px;
+}
+
+button.secondary {
+  margin-top: 10px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  background: linear-gradient(
+    90deg,
+    #a5b4fc,
+    #c084fc
+  );
+  color: #312e81;
+  cursor: pointer;
+}
+
+
+
+/* ===== 보관함 전체 영역 ===== */
+/* 보관함 영역 */
+.archive-section {
+  width: 90vw;            /* 화면 가로 90% */
+  height: 90vh;           /* 화면 세로 90% */
+  margin: 30px auto;      /* 화면 중앙 정렬 */
+  padding: 32px 28px;
+  border-radius: 20px;
+
+  background: linear-gradient(145deg, #f7fbff, #f8f6ff); /* 연한 색상 */
+  box-shadow:
+    0 30px 60px rgba(80, 70, 180, 0.15),
+    0 14px 28px rgba(80, 70, 180, 0.10),
+    0 6px 12px rgba(80, 70, 180, 0.08);
+
+  overflow-y: auto;
+  position: relative;
+  z-index: 50;
+}
+
+/* 보관함 버튼 */
+.archive-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 1.2rem;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(90deg, #38bdf8, #6366f1);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.archive-toggle:hover {
+  transform: scale(1.15);
+}
+
+/* 보관함 제목 */
+.archive-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #4338ca;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+/* 카드 그리드 */
+.archive-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+/* 카드 */
+.summary-card {
+  background: rgba(255,255,255,0.85); /* 살짝 더 밝고 연하게 */
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.08),
+    0 10px 20px rgba(0,0,0,0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 30px 60px rgba(0,0,0,0.12),
+    0 12px 24px rgba(0,0,0,0.10);
+}
+
+/* 카드 내부 */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.summary-text {
+  font-size: 15px;
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.highlights span.keyword {
+  background: #fffbea;
+  color: #b59f00;
+  padding: 4px 6px;
+  border-radius: 6px;
+  margin: 2px 2px 2px 0;
+  display: inline-block;
+}
+
+.highlights span.sentence {
+  background: #e5f0ff;
+  color: #1d4ed8;
+  padding: 4px 6px;
+  border-radius: 6px;
+  margin: 2px 2px 2px 0;
+  display: inline-block;
+}
+
+.violation {
+  font-size: 12px;
+  color: #999;
+  margin-top: 8px;
+  text-align: right;
+}
+.archive-section {
+  position: relative;
+}
+/* transition-group */
+.fade-slide-enter-active, .fade-slide-leave-active {
+  transition: all 0.4s ease;
+}
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(15px);
+}
+.fade-slide-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(15px);
+}

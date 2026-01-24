@@ -5,6 +5,7 @@ import com.docbrief.document.dto.api.DocumentCreateResponse;
 import com.docbrief.document.dto.api.DocumentStatusResponse;
 import com.docbrief.document.dto.internal.SummaryInternalRequest;
 import com.docbrief.document.service.DocumentService;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +14,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Log4j2
 @RestController
-@CrossOrigin(origins="http://localhost:5173")
+@CrossOrigin(origins="http://localhost:5173", allowCredentials = "true")
 @AllArgsConstructor
 @RequestMapping("/documents")
 public class DocumentController {
 
     private final DocumentService documentService;
+
+    // 최초 세션 생성용 (optional)
+    @GetMapping("/session/init")
+    public String initSession(HttpSession session) {
+        return session.getId();
+    }
 
     @PostMapping
     public ResponseEntity<?> create(@RequestParam(value="mode") String mode,

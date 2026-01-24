@@ -12,13 +12,14 @@
       <div class="input-tabs">
         <button
           :class="{ active: mode === 'file' }"
-          @click="mode = 'file'"
+          @click="switchMode('file')"
         >
           파일 업로드
         </button>
+
         <button
           :class="{ active: mode === 'url' }"
-          @click="mode = 'url'"
+          @click="switchMode('url')"
         >
           URL 입력
         </button>
@@ -30,7 +31,7 @@
         <button
           class="primary"
           @click="uploadAndParse"
-          :disabled="!file"
+          :disabled="!file || isLoading"
         >
           업로드
         </button>
@@ -43,7 +44,11 @@
           v-model="url"
           placeholder="https://example.com/document"
         />
-        <button class="primary" @click="loadAndParse">
+        <button
+          class="primary"
+          @click="loadAndParse"
+          :disabled="!url || isLoading"
+        >
           불러오기
         </button>
       </div>
@@ -64,15 +69,33 @@
 
     <!-- 요약 결과 -->
     <transition name="fade-slide">
-      <section v-if="parseResult" class="summary-section">
-        <h3>요약 결과</h3>
-        <pre class="result-box">
-{{ parseResult }}
-        </pre>
-      </section>
+        <section v-if="summaryResult" class="summary-section">
+            <h3>요약 결과</h3>
+            <pre class="result-box">
+                <p v-html="highlightedSummary"></p>
+            </pre>
+        </section>
+    </transition>
+  </div>
+
+  <!-- 로딩 오버레이 컨테이너 -->
+  <section v-if="summaryResult || isLoading" class="summary-wrapper">
+
+    <!-- 로딩 오버레이 -->
+    <transition name="fade">
+      <div v-if="isLoading" class="loading-overlay">
+        <div class="loading-content">
+          <div class="loading-box">
+            <div class="loading-bar"></div>
+          </div>
+          <p class="loading-text">
+            {{ loadingText }}
+          </p>
+        </div>
+      </div>
     </transition>
 
-  </div>
+  </section>
 </template>
 
 <script setup>
@@ -94,43 +117,101 @@ const url = ref(null);
 const documentId = ref(null);
 const parseResult = ref(null);
 const errorMessage = ref(null);
+const summaryResult = ref(null);
+const loadingStage = ref(null);
+
+
 
 /**
  * 결과 존재 여부 (input 영역 compact 처리용)
  */
-const hasResult = computed(() => !!parseResult.value);
+const hasResult = computed(() => !!summaryResult.value);
+
+/*
+* 로딩 완료 여부/**
+* ANALYZE: 문서 분석 중
+* SUMMARY: 요약 생성 중
+*/
+const isLoading = computed(() => loadingStage.value !== null);
+
+/**
+ * 요약 결과 키워드 추출
+ */
+const highlightedSummary = computed(() => {
+  if (!summaryResult.value) return "";
+
+  let text = summaryResult.value.summaryText;
+
+  const keywords = summaryResult.value.highlights
+    .filter(h => h.type === "KEYWORD")
+    .map(h => h.value);
+
+  keywords.forEach(keyword => {
+    const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(`(${escaped})`, "g");
+
+    text = text.replace(
+      regex,
+      `<span class="keyword-highlight">$1</span>`
+    );
+  });
+
+  return text;
+});
+
+/**
+ * 로딩 텍스트
+ */
+const loadingText = computed(() => {
+  if (loadingStage.value === "ANALYZE") {
+    return "문서를 분석 중입니다…";
+  }
+  if (loadingStage.value === "SUMMARY") {
+    return "문서를 요약 중입니다…";
+  }
+  return "";
+});
 
 /**
  * 파일 선택
  */
 function onFileChange(e) {
   file.value = e.target.files[0];
+  resetSummary();
 }
 
 /**
  * [파일 기준] 업로드 → 파싱 → 요약
  */
 async function uploadAndParse() {
-  try{
-      // 에러메시지 초기화
-      errorMessage.value = null;
+  isLoading.value = true;
 
-      // 1. 파일 업로드 → documentId 발급
-      documentId.value = await uploadDocument(file.value);
+  try {
+    // 에러메시지 초기화
+    errorMessage.value = null;
 
-      // 2. 문서 파싱 (/documents/process)
-      const parseDto = await processDocument(documentId.value, file.value);
+    //상태 변경
+    loadingStage.value = "ANALYZE";
 
-      // 3. 요약 요청 (/{documentId}/summary)
-      const summary = await summarizeDocument(
-        documentId.value,
-        parseDto
-      );
+    // 1. 파일 업로드 → documentId 발급
+    documentId.value = await uploadDocument(file.value);
 
-      // 4. 결과 표시
-      parseResult.value = summary;
+    // 2. 문서 파싱 (/documents/process)
+    const parseDto = await processDocument(documentId.value, file.value);
+
+    loadingStage.value = "SUMMARY";
+    // 3. 요약 요청 (/{documentId}/summary)
+    const summary = await summarizeDocument(
+    documentId.value,
+    parseDto
+    );
+
+    // 4. 결과 표시
+    summaryResult.value = summary;
   }catch(e){
     handleError(e);
+  } finally {
+    isLoading.value = false;
   }
 }
 
@@ -138,9 +219,14 @@ async function uploadAndParse() {
  * [URL 기준]
  */
 async function loadAndParse() {
+    isLoading.value = true;
+
     try{
         // 에러메시지 초기화
-          errorMessage.value = null;
+        errorMessage.value = null;
+
+        //상태 변경
+        loadingStage.value = "ANALYZE";
 
         // 1. documentId 발급
         documentId.value = await uploadUrl(url.value);
@@ -148,16 +234,19 @@ async function loadAndParse() {
         // 2. URL 내부 HTML 파싱 (/url/process)
         const parseDto = await processUrl(documentId.value, url.value);
 
+        loadingStage.value = "SUMMARY";
         // 3. 요약 요청 (/{documentId}/summary)
-        const summary = await summarizeDocument(
+        const summaryDto = await summarizeDocument(
           documentId.value,
           parseDto
         );
 
         // 4. 결과 표시
-        parseResult.value = summary;
+        summaryResult.value = summaryDto;
     }catch(e){
         handleError(e);
+    } finally {
+        isLoading.value = false;
     }
 }
 
@@ -172,5 +261,28 @@ function handleError(e) {
   } else {
     errorMessage.value = "알 수 없는 오류가 발생했습니다.";
   }
+}
+
+/**
+ * 파일업로드,URL 버튼 클릭이벤트
+ */
+function switchMode(nextMode) {
+  if (mode.value !== nextMode) {
+    mode.value = nextMode;
+
+    // 입력값도 같이 초기화
+    file.value = null;
+    url.value = null;
+
+    resetSummary();
+  }
+}
+
+/**
+ * 요약 내용 초기화
+ */
+function resetSummary() {
+  summaryResult.value = null;
+  documentId.value = null;
 }
 </script>

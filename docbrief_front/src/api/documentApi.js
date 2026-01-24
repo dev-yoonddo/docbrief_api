@@ -8,9 +8,11 @@ const api = axios.create({
  * 문서 업로드
  * POST /documents
  */
-export async function uploadDocument(file) {
+export async function uploadDocument(mode, file, url) {
   const formData = new FormData();
+  formData.append("mode", mode);
   formData.append("file", file);
+  formData.append("url", url);
 
   const res = await api.post("/documents", formData, {
     headers: {
@@ -25,9 +27,11 @@ export async function uploadDocument(file) {
  * 문서 파싱
  * POST /documents/{documentId}/process
  */
-export async function processDocument(documentId, file) {
+export async function processDocument(mode, documentId, file, url) {
   const formData = new FormData();
+  formData.append("mode", mode);
   formData.append("file", file);
+  formData.append("url", url);
 
   const res = await api.post(
     `/documents/${documentId}/process`,
@@ -40,39 +44,6 @@ export async function processDocument(documentId, file) {
   );
 
   return res.data; // 👉 parsed DTO 전체
-}
-
-/**
- * DocumentId 생성 (URL)
- * POST /documents
- */
-export async function uploadUrl(url) {
-
-  const res = await api.post("/documents/from-url",
-    null,
-    {
-    params: { url } // query param
-    }
-  );
-
-  return res.data.documentId;
-}
-
-/**
- * Url 파싱
- * POST /documents/{documentId}/url/process
- */
-export async function processUrl(documentId, url) {
-
-  const res = await api.post(
-    `/documents/${documentId}/url/process`,
-    null,
-    {
-      params: { url } // query param
-    }
-  );
-
-  return res.data; //  parsed DTO 전체
 }
 
 /**

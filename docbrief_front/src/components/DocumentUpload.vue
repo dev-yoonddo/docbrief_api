@@ -46,7 +46,7 @@
         />
         <button
           class="primary"
-          @click="loadAndParse"
+          @click="uploadAndParse"
           :disabled="!url || isLoading"
         >
           불러오기
@@ -103,9 +103,7 @@ import { ref, computed } from "vue";
 import {
   uploadDocument,
   processDocument,
-  summarizeDocument,
-  uploadUrl,
-  processUrl
+  summarizeDocument
 } from "../api/documentApi";
 
 /**
@@ -194,10 +192,10 @@ async function uploadAndParse() {
     loadingStage.value = "ANALYZE";
 
     // 1. 파일 업로드 → documentId 발급
-    documentId.value = await uploadDocument(file.value);
+    documentId.value = await uploadDocument(mode.value, file.value, url.value);
 
     // 2. 문서 파싱 (/documents/process)
-    const parseDto = await processDocument(documentId.value, file.value);
+    const parseDto = await processDocument(mode.value, documentId.value, file.value, url.value);
 
     loadingStage.value = "SUMMARY";
     // 3. 요약 요청 (/{documentId}/summary)
@@ -213,41 +211,6 @@ async function uploadAndParse() {
   } finally {
     isLoading.value = false;
   }
-}
-
-/**
- * [URL 기준]
- */
-async function loadAndParse() {
-    isLoading.value = true;
-
-    try{
-        // 에러메시지 초기화
-        errorMessage.value = null;
-
-        //상태 변경
-        loadingStage.value = "ANALYZE";
-
-        // 1. documentId 발급
-        documentId.value = await uploadUrl(url.value);
-
-        // 2. URL 내부 HTML 파싱 (/url/process)
-        const parseDto = await processUrl(documentId.value, url.value);
-
-        loadingStage.value = "SUMMARY";
-        // 3. 요약 요청 (/{documentId}/summary)
-        const summaryDto = await summarizeDocument(
-          documentId.value,
-          parseDto
-        );
-
-        // 4. 결과 표시
-        summaryResult.value = summaryDto;
-    }catch(e){
-        handleError(e);
-    } finally {
-        isLoading.value = false;
-    }
 }
 
 /**

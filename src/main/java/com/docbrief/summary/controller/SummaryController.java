@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Log4j2
 @RestController
 @AllArgsConstructor
+@CrossOrigin(origins="http://localhost:5173")
 public class SummaryController {
     public SummaryProcessor summaryProcessor;
 

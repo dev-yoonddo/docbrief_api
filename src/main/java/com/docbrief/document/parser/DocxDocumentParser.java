@@ -2,6 +2,7 @@ package com.docbrief.document.parser;
 
 import com.docbrief.common.DocumentParsingException;
 import com.docbrief.document.domain.DocumentType;
+import com.docbrief.document.text.SentenceSplitter;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.springframework.stereotype.Component;

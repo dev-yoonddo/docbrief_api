@@ -205,6 +205,95 @@ button.secondary {
   transform: translateY(0);
 }
 
+.keyword-highlight {
+  background: linear-gradient(
+    120deg,
+    rgba(99, 102, 241, 0.25),
+    rgba(139, 92, 246, 0.25)
+  );
+  color: #3730a3; /* 네이비 보라 */
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* 로딩바 관련 css ---------*/
+.summary-section.loading {
+  text-align: center;
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.7); /* 흐림 효과 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  backdrop-filter: blur(2px);
+}
+
+/* 로딩 박스 */
+.loading-box {
+  width: 220px;
+  height: 10px;
+  background: rgba(30, 41, 59, 0.15);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+/* 움직이는 바 */
+.loading-bar {
+  height: 100%;
+  width: 30%;
+  background: linear-gradient(
+    90deg,
+    #1e293b,
+    #334155,
+    #475569
+  );
+  border-radius: 8px;
+  animation: loading-move 1.4s ease-in-out infinite;
+}
+
+.loading-content {
+  text-align: center;
+}
+
+.loading-text {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+/* 애니메이션 */
+@keyframes loading-move {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(200%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+/* 로딩바 관련 css END ---------*/
+.summary-wrapper {
+  position: relative;
+}
+
 
 /* ===== 에러 모달 오버레이 ===== */
 .error-overlay {

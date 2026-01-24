@@ -49,6 +49,19 @@
       </div>
     </section>
 
+     <!-- 에러 모달 -->
+    <transition name="fade-slide">
+      <div v-if="errorMessage" class="error-overlay">
+        <div class="error-modal">
+          <h4>요약 처리 중 오류가 발생했습니다</h4>
+          <p>{{ errorMessage }}</p>
+          <button class="primary" @click="errorMessage = null">
+            확인
+          </button>
+        </div>
+      </div>
+    </transition>
+
     <!-- 요약 결과 -->
     <transition name="fade-slide">
       <section v-if="parseResult" class="summary-section">
@@ -80,6 +93,7 @@ const file = ref(null);
 const url = ref(null);
 const documentId = ref(null);
 const parseResult = ref(null);
+const errorMessage = ref(null);
 
 /**
  * 결과 존재 여부 (input 영역 compact 처리용)
@@ -97,39 +111,66 @@ function onFileChange(e) {
  * [파일 기준] 업로드 → 파싱 → 요약
  */
 async function uploadAndParse() {
-  // 1. 파일 업로드 → documentId 발급
-  documentId.value = await uploadDocument(file.value);
+  try{
+      // 에러메시지 초기화
+      errorMessage.value = null;
 
-  // 2. 문서 파싱 (/documents/process)
-  const parseDto = await processDocument(documentId.value, file.value);
+      // 1. 파일 업로드 → documentId 발급
+      documentId.value = await uploadDocument(file.value);
 
-  // 3. 요약 요청 (/{documentId}/summary)
-  const summary = await summarizeDocument(
-    documentId.value,
-    parseDto
-  );
+      // 2. 문서 파싱 (/documents/process)
+      const parseDto = await processDocument(documentId.value, file.value);
 
-  // 4. 결과 표시
-  parseResult.value = summary;
+      // 3. 요약 요청 (/{documentId}/summary)
+      const summary = await summarizeDocument(
+        documentId.value,
+        parseDto
+      );
+
+      // 4. 결과 표시
+      parseResult.value = summary;
+  }catch(e){
+    handleError(e);
+  }
 }
 
 /**
  * [URL 기준]
  */
 async function loadAndParse() {
-    // 1. documentId 발급
-    documentId.value = await uploadUrl(url.value);
+    try{
+        // 에러메시지 초기화
+          errorMessage.value = null;
 
-    // 2. URL 내부 HTML 파싱 (/url/process)
-    const parseDto = await processUrl(documentId.value, url.value);
+        // 1. documentId 발급
+        documentId.value = await uploadUrl(url.value);
 
-    // 3. 요약 요청 (/{documentId}/summary)
-    const summary = await summarizeDocument(
-      documentId.value,
-      parseDto
-    );
+        // 2. URL 내부 HTML 파싱 (/url/process)
+        const parseDto = await processUrl(documentId.value, url.value);
 
-    // 4. 결과 표시
-    parseResult.value = summary;
+        // 3. 요약 요청 (/{documentId}/summary)
+        const summary = await summarizeDocument(
+          documentId.value,
+          parseDto
+        );
+
+        // 4. 결과 표시
+        parseResult.value = summary;
+    }catch(e){
+        handleError(e);
+    }
+}
+
+/**
+ * 에러 발생
+ */
+function handleError(e) {
+  const error = e?.response?.data;
+
+  if (error?.message) {
+    errorMessage.value = error.message;
+  } else {
+    errorMessage.value = "알 수 없는 오류가 발생했습니다.";
+  }
 }
 </script>

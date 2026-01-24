@@ -50,7 +50,7 @@ export async function processDocument(mode, documentId, file, url) {
  * 문서 요약
  * POST /{documentId}/summary
  */
-export async function summarizeDocument(documentId, parseDto, type = "document") {
+export async function summarizeDocument(documentId, parseDto, type) {
   const res = await api.post(
     `/${documentId}/summary`,
     parseDto,

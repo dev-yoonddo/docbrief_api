@@ -200,7 +200,8 @@ async function uploadAndParse() {
     // 3. 요약 요청 (/{documentId}/summary)
     const summary = await summarizeDocument(
     documentId.value,
-    parseDto
+    parseDto,
+    mode.value
     );
 
     // 4. 결과 표시
@@ -225,21 +226,24 @@ async function loadAndParse() {
         loadingStage.value = "ANALYZE";
 
         // 1. documentId 발급
-        documentId.value = await uploadUrl(mode.value, file.value, url.value);
+        documentId.value = await uploadDocument(mode.value, file.value, url.value);
 
         // 2. URL 내부 HTML 파싱 (/url/process)
-        const parseDto = await processUrl(mode.value, documentId.value, file.value, url.value);
+        const parseDto = await processDocument(mode.value, documentId.value, file.value, url.value);
 
         loadingStage.value = "SUMMARY";
         // 3. 요약 요청 (/{documentId}/summary)
         const summaryDto = await summarizeDocument(
           documentId.value,
-          parseDto
+          parseDto,
+          mode.value
         );
 
         // 4. 결과 표시
         summaryResult.value = summaryDto;
     }catch(e){
+    console.log('오류왜남')
+    console.log(e)
         handleError(e);
     } finally {
         loadingStage.value = null;

@@ -1,56 +1,44 @@
 package com.docbrief.summary.ai;
 
+import com.docbrief.common.ErrorCode;
+import com.docbrief.common.SummaryProcessingException;
+import com.docbrief.summary.ai.OpenAiResponse;
 import com.docbrief.summary.domain.SummaryJob;
+import com.docbrief.summary.domain.SummaryRequest;
+import com.docbrief.summary.domain.SummaryResult;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
+import java.util.Objects;
 
 @Component
+@RequiredArgsConstructor
 public class OpenAiClient implements LlmClient {
 
-    private final RestTemplate restTemplate;
-    private final String apiKey;
+    private final WebClient openAiWebClient;
 
-    public OpenAiClient(
-            RestTemplate restTemplate,
-            @Value("${gemini.api.key}") String apiKey
-    ) {
-        this.restTemplate = restTemplate;
-        this.apiKey = apiKey;
-    }
+    @Value("${openai.model.name}")
+    private String model;
 
+    @Override
     public String summarize(String text, SummaryJob summaryJob) {
 
-        String url =
-                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
-                        + "?key=" + apiKey;
+        OpenAiRequest request = OpenAiRequest.fromText(model, text);
 
-        AiRequest request = new AiRequest(
-                List.of(
-                        new AiRequest.Content(
-                                List.of(new AiRequest.Part(text))
-                        )
-                )
-        );
+        OpenAiResponse response = openAiWebClient.post()
+        .uri("/chat/completions")
+        .bodyValue(request)
+        .retrieve()
+        .onStatus(
+                status -> status.value() == 429,
+                res -> Mono.error(new SummaryProcessingException(ErrorCode.SUMMARY_AI_RATE_LIMIT))
+        )
+        .bodyToMono(OpenAiResponse.class)
+        .block();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<AiRequest> entity =
-                new HttpEntity<>(request, headers);
-
-        ResponseEntity<AiResponse> response =
-                restTemplate.exchange(
-                        url,
-                        HttpMethod.POST,
-                        entity,
-                        AiResponse.class
-                );
-        String result = response.getBody().getText();
-        result = result.replaceAll("```json", "").replaceAll("```", "").trim();
-        return result;
-    }
+        return Objects.requireNonNull(response).getText();
+     }
 }

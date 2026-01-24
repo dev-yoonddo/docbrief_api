@@ -15,14 +15,16 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @CrossOrigin(origins="http://localhost:5173")
 public class SummaryController {
-    public SummaryProcessor summaryProcessor;
 
+    public SummaryProcessor summaryProcessor;
 
     /**
      * AI 요약 요청
      *
-     * @param id, type, summaryInternalRequest
-     * @return String
+     * @param id: 문서 키값
+     *        ,type: 요약 대상 타입 (document/url)
+     *        , summaryInternalRequest: 파싱된 요약 대상
+     * @return SummaryResponse
      */
     @PostMapping("/{id}/summary")
     public ResponseEntity<SummaryResponse>  process(@PathVariable Long id

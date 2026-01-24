@@ -2,8 +2,11 @@ package com.docbrief.summary.service;
 
 import com.docbrief.common.ErrorCode;
 import com.docbrief.common.SummaryProcessingException;
+import com.docbrief.document.domain.DocumentStatus;
 import com.docbrief.document.dto.internal.SummaryInternalRequest;
+import com.docbrief.document.repository.DocumentRepository;
 import com.docbrief.summary.ai.GeminiClient;
+import com.docbrief.summary.ai.OpenAiClient;
 import com.docbrief.summary.ai.PromptBuilder;
 import com.docbrief.summary.domain.SummaryJob;
 import com.docbrief.summary.domain.SummaryResponse;
@@ -27,10 +30,12 @@ import java.time.format.DateTimeFormatter;
 public class SummaryProcessor {
     private PromptBuilder promptBuilder;
     private GeminiClient geminiClient;
+    private OpenAiClient openAiClient;
     private ObjectMapper objectMapper;
     private SummaryJobService summaryJobService;
     private SummaryResultService summaryResultService;
     private SummaryResultRepository summaryResultRepository;
+    private DocumentRepository documentRepository;
 
     /**
      * SummaryInternalRequest 객체를 JSON 문자열로 직렬화 후
@@ -40,70 +45,76 @@ public class SummaryProcessor {
      * @return JSON 형태의 문자열
      * @throws RuntimeException AI 요청 실패 시
      */
-    public SummaryResponse startSummaryEngine(SummaryInternalRequest summaryRequest){
-        LocalDateTime date = null;
-        String result = "";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        date = LocalDateTime.now();
-        Instant start = Instant.now();
-        SummaryResponse response = new SummaryResponse();
+    public SummaryResponse startSummaryEngine(SummaryInternalRequest summaryRequest) {
 
-        // 첫번째 요청 시작
-        log.info("Gemini Request ::: {}", date.format(formatter));
+        // 1. 문서 상태를 SUMMARIZING으로 업데이트
+        int updated = documentRepository.updateStatusByDocumentId(
+                summaryRequest.getDocumentId(),
+                DocumentStatus.SUMMARIZING
+        );
+
+        // 이미 다른 요약이 진행중이면 예외 발생
+        if (updated == 0) {
+            throw new SummaryProcessingException(ErrorCode.SUMMARY_ALREADY_PROCESSING);
+        }
+
+        // 2. Job 생성
         SummaryJob summaryJob = summaryJobService.insertSummaryJob(summaryRequest.getDocumentId());
 
+        String result;
         try {
-            // JSON 파싱
-            String summaryJson = this.summaryRequestToJson(summaryRequest);
+            // 3. JSON 변환 & Prompt 생성
+            String summaryJson = objectMapper.writeValueAsString(summaryRequest);
+            StringBuilder prompt = promptBuilder.buildSummaryPrompt(summaryJson);
+            prompt.append("문서 내용:\n").append(summaryJson);
 
-            // Prompt 생성
-            StringBuilder prompt = new StringBuilder();
-            prompt = promptBuilder.buildSummaryPrompt(summaryJson.toString());
-            prompt.append("문서 내용:\n");
-            prompt.append(summaryJson);
-
-            // AI 요청 시작
-            log.info("START AIClient summarize ::: {}", summaryJob.getJobId());
-
-            // STATUS 값 저장
+            // 4. AI 요약
             summaryJobService.setJobProcessing(summaryJob.getJobId());
-
-            // AI 요청
-            result = geminiClient.summarize(
-                    prompt.toString()
-                    , summaryJob
-            );
-
-            // AI 요청 끝
-            log.info("END AIClient summarize ::: {}", summaryJob.getJobId());
-
-            date = LocalDateTime.now();
-            Instant end = Instant.now();;
-
-            // STATUS 값 저장
+            result = this.callAiWithFallback(prompt.toString(), summaryJob);
             summaryJobService.setJobCompleted(summaryJob.getJobId());
-            // 요약 결과 저장
+
+            // 5. 문서 상태 완료 처리
+            documentRepository.updateStatusByDocumentId(
+                    summaryRequest.getDocumentId(),
+                    DocumentStatus.SUMMARIZED);
+
+            // 6. 결과 저장
             SummaryResult summaryResult = new SummaryResult();
             summaryResult.setJobId(summaryJob.getJobId());
             summaryResult.setContent(result);
-
             summaryResultService.insertSummaryResult(summaryResult);
 
-            Duration duration = Duration.between(start, end);
-            log.info("Gemini Response ::: {}", date.format(formatter));
-            log.info("소요시간 s ::: {} / ms ::: {}", duration.toSeconds(), duration.toMillis());
-            log.info("Summary Result ================================================");
-            log.info(result);
-            log.info("===============================================================");
+            return getSummaryResult(summaryResult.getJobId());
 
-            response = this.getSummaryResult(summaryResult.getJobId());
-            log.info("AI결과 재파싱 !");
-            log.info(response);
-        }catch (Exception e){
+        } catch (Exception e) {
+            // 실패 시 document 상태 및 job 처리
             summaryJobService.setJobFailed(summaryJob.getJobId());
+            documentRepository.updateStatusByDocumentId(
+                    summaryRequest.getDocumentId(),
+                    DocumentStatus.EXTRACTED); // EXTRACTED 상태로 롤백
             throw new SummaryProcessingException(ErrorCode.SUMMARY_AI_REQUEST_ERROR, e);
         }
-        return response;
+    }
+
+    /**
+     * Gemini 먼저 호출하고, 429 TOO_MANY_REQUEST 발생 시 OpenAI로 fallback
+     */
+    private String callAiWithFallback(String prompt, SummaryJob summaryJob) {
+        try {
+            return geminiClient.summarize(prompt, summaryJob);
+        } catch (SummaryProcessingException e) {
+            if (isQuotaExceeded(e)) {
+                log.warn("Gemini quota exceeded, fallback to OpenAI: {}", e.getMessage());
+                // 재시도 시에는 Job 상태를 실패 처리하지 않고 그대로
+                return openAiClient.summarize(prompt, summaryJob);
+            }
+            // 그 외 예외는 그대로 던짐
+            throw e;
+        }
+    }
+
+    private boolean isQuotaExceeded(SummaryProcessingException e) {
+        return e.getStatusCode() == 429;
     }
 
     /**

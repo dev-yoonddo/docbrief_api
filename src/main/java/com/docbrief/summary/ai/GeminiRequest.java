@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class AiRequest {
+public class GeminiRequest {
 
     private List<Content> contents;
 
@@ -23,8 +23,8 @@ public class AiRequest {
         private String text;
     }
 
-    public static AiRequest fromText(String text) {
-        return new AiRequest(
+    public static GeminiRequest fromText(String text) {
+        return new GeminiRequest(
                 List.of(
                         new Content(
                                 List.of(new Part(text))

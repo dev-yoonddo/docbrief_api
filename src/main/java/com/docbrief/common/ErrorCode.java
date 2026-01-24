@@ -59,21 +59,31 @@ public enum ErrorCode {
             "요약 결과 데이터 변환에 실패했습니다",
             HttpStatus.INTERNAL_SERVER_ERROR
     ),
+    SUMMARY_ALREADY_PROCESSING(
+        "SUMMARY_003",
+        "이미 요약이 진행 중인 문서입니다.",
+        HttpStatus.CONFLICT
+    ),
 
     // AI 호출 관련
-    SUMMARY_AI_REQUEST_ERROR("SUMMARY_003",
+    SUMMARY_AI_REQUEST_ERROR(
+            "SUMMARY_004",
             "AI 요약 요청에 실패했습니다.",
             HttpStatus.INTERNAL_SERVER_ERROR
     ),
-    SUMMARY_AI_RESPONSE_ERROR("SUMMARY_004",
+
+    SUMMARY_AI_RESPONSE_ERROR(
+            "SUMMARY_005",
             "AI 요약 응답에 실패했습니다.",
             HttpStatus.INTERNAL_SERVER_ERROR
     ),
-    SUMMARY_AI_TIMEOUT("SUMMARY_005",
+    SUMMARY_AI_TIMEOUT(
+            "SUMMARY_006",
             "AI 요약 타임아웃이 발생했습니다.",
             HttpStatus.REQUEST_TIMEOUT
     ),
-    SUMMARY_AI_RATE_LIMIT("SUMMARY_006",
+    SUMMARY_AI_RATE_LIMIT(
+            "SUMMARY_007",
             "요약 요청이 많아 AI 호출 제한에 걸렸습니다.",
             HttpStatus.TOO_MANY_REQUESTS
     );

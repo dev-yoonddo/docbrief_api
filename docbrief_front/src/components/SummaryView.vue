@@ -6,6 +6,12 @@
       @click="toggleArchive"
     >
       {{ showArchive ? '✖️️' : '📂' }}
+      <span
+          v-if="archiveCount > 0"
+          class="archive-badge"
+        >
+          {{ archiveCount }}
+      </span>
     </button>
     <!-- 입력 영역 -->
     <section
@@ -113,7 +119,8 @@
       <h2 class="archive-title">요약 보관함</h2>
 
       <div v-if="summaryResultList.length === 0" class="empty-text">
-        보관된 요약이 없습니다.
+        📭 아직 보관된 요약이 없어요.<p />
+        파일이나 URL을 업로드해서 첫 요약을 만들어보세요!
       </div>
 
       <transition-group name="fade-slide" tag="div" class="archive-cards">
@@ -148,7 +155,7 @@
           </div>
         </div>
       </transition-group>
-      <div class="archive-actions">
+      <div class="archive-actions" v-if="summaryResultList.length > 0">
           <button
            class="download-btn"
            :disabled="selectedSummaries.length === 0"
@@ -187,6 +194,7 @@ const loadingStage = ref(null);
 const showArchive = ref(false);
 const sessionId = ref(null);
 const summaryResultList = ref([]); // 세션별 요약 결과 저장
+const archiveCount = computed(() => summaryResultList.value.length);
 const selectedSummaries = computed(() =>
     summaryResultList.value.filter(item => item.selected)
 );

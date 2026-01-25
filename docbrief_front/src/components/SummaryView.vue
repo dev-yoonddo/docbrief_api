@@ -4,9 +4,8 @@
     <button
       class="archive-toggle fixed top-4 right-4 text-2xl"
       @click="toggleArchive"
-      :title="showArchive ? '입력 영역으로 돌아가기' : '보관함 보기'"
     >
-      📂
+      {{ showArchive ? '⬅️' : '📂' }}
     </button>
     <!-- 입력 영역 -->
     <section
@@ -104,7 +103,12 @@
   </section>
     <!-- 보관함 영역 -->
     <section v-if="showArchive" class="archive-section">
-      <button class="archive-toggle back-button" @click="toggleArchive">⬅️ 입력 영역으로 돌아가기</button>
+      <button
+        class="archive-toggle fixed top-4 right-4 text-2xl"
+        @click="toggleArchive"
+      >
+        {{ showArchive ? '⬅️' : '📂' }}
+      </button>
 
       <h2 class="archive-title">요약 보관함</h2>
 

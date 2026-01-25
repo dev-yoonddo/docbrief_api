@@ -6,7 +6,7 @@
     >
       {{ showArchive ? '✖️️' : '📂' }}
       <span
-          v-if="archiveCount > 0"
+          v-if="archiveCount > 0 && !showArchive"
           class="archive-badge"
         >
           {{ archiveCount }}
@@ -205,24 +205,37 @@ const hasResult = computed(() => !!summaryResult.value);
  * 페이지 로드 시 세션 초기화
  */
 onMounted(async () => {
-  sessionId.value = await initSession();
-  // 새로고침 시에도 보관함 유지
-    const saved = sessionStorage.getItem("summaryArchive");
-    if (saved) {
-      summaryResultList.value = JSON.parse(saved);
+    try {
+      sessionId.value = await initSession();
+    } catch (e) {
+      console.warn("session init 실패", e);
     }
+    // 새로고침 시에도 보관함 유지
+    const saved = localStorage.getItem("summaryArchive");
+     if (saved) {
+      try {
+         summaryResultList.value = JSON.parse(saved);
+      } catch {
+         localStorage.removeItem("summaryArchive");
+      }
+     }
 });
 
 watch(
   summaryResultList,
   (val) => {
-    sessionStorage.setItem(
+    if (!val || val.length === 0) {
+      localStorage.removeItem("summaryArchive");
+      return;
+    }
+    localStorage.setItem(
       "summaryArchive",
       JSON.stringify(val)
     );
   },
   { deep: true }
 );
+
 
 /*
 * 로딩 완료 여부/**

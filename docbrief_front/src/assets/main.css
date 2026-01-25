@@ -526,6 +526,7 @@ button.secondary {
 
 .archive-toggle:hover {
   transform: scale(1.13);
+  cursor: pointer;
 }
 
 /* 🔴 뱃지 */

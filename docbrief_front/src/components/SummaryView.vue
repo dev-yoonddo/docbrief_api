@@ -154,7 +154,7 @@ import {
   processDocument,
   summarizeDocument,
   initSession
-} from "../api/documentApi";
+} from "../api/SummaryApi";
 
 /**
  * UI 상태

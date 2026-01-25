@@ -1,7 +1,7 @@
 <template>
-  <DocumentUpload />
+  <SummaryView />
 </template>
 
 <script setup>
-import DocumentUpload from "./components/DocumentUpload.vue";
+import SummaryView from "./components/SummaryView.vue";
 </script>

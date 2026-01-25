@@ -51,43 +51,76 @@ public enum ErrorCode {
     // JSON 변환 관련
     SUMMARY_REQUEST_CONVERSION_ERROR(
             "SUMMARY_001",
-            "요약 요청 데이터 변환에 실패했습니다.",
+            null,
             HttpStatus.INTERNAL_SERVER_ERROR
     ),
     SUMMARY_RESPONSE_CONVERSION_ERROR(
             "SUMMARY_002",
-            "요약 결과 데이터 변환에 실패했습니다",
+            null,
             HttpStatus.INTERNAL_SERVER_ERROR
     ),
     SUMMARY_ALREADY_PROCESSING(
         "SUMMARY_003",
-        "이미 요약이 진행 중인 문서입니다.",
+        null,
         HttpStatus.CONFLICT
     ),
 
     // AI 호출 관련
     SUMMARY_AI_REQUEST_ERROR(
             "SUMMARY_004",
-            "AI 요약 요청에 실패했습니다.",
+            null,
             HttpStatus.INTERNAL_SERVER_ERROR
     ),
 
     SUMMARY_AI_RESPONSE_ERROR(
             "SUMMARY_005",
-            "AI 요약 응답에 실패했습니다.",
+            null,
             HttpStatus.INTERNAL_SERVER_ERROR
     ),
     SUMMARY_AI_TIMEOUT(
             "SUMMARY_006",
-            "AI 요약 타임아웃이 발생했습니다.",
+            null,
             HttpStatus.REQUEST_TIMEOUT
     ),
     SUMMARY_AI_RATE_LIMIT(
             "SUMMARY_007",
-            "요약 요청이 많아 AI 호출 제한에 걸렸습니다.",
+            null,
+            HttpStatus.TOO_MANY_REQUESTS
+    ),
+
+    //OPENAI ERROR
+    SUMMARY_OPENAI_REQUEST_ERROR(
+            "SUMMARY_008",
+            null,
+            HttpStatus.INTERNAL_SERVER_ERROR
+    ),
+    SUMMARY_OPENAI_RESPONSE_ERROR(
+            "SUMMARY_009",
+            null,
+            HttpStatus.INTERNAL_SERVER_ERROR
+    ),
+    SUMMARY_OPENAI_RATE_LIMIT(
+            "SUMMARY_010",
+            null,
+            HttpStatus.TOO_MANY_REQUESTS
+    ),
+
+    //GEMINI ERROR
+    SUMMARY_GEMINI_REQUEST_ERROR(
+            "SUMMARY_011",
+            null,
+            HttpStatus.INTERNAL_SERVER_ERROR
+    ),
+    SUMMARY_GEMINI_RESPONSE_ERROR(
+            "SUMMARY_012",
+            null,
+            HttpStatus.INTERNAL_SERVER_ERROR
+    ),
+    SUMMARY_GEMINI_RATE_LIMIT(
+            "SUMMARY_013",
+            null,
             HttpStatus.TOO_MANY_REQUESTS
     );
-
 
     private final String code;
     private final String message;

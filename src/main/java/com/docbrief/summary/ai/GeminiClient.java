@@ -58,16 +58,16 @@ public class GeminiClient implements LlmClient {
         } catch (HttpClientErrorException e) {
             // 429 처리
             if (e.getStatusCode() == HttpStatus.TOO_MANY_REQUESTS) {
-                throw new SummaryProcessingException(ErrorCode.SUMMARY_AI_RATE_LIMIT, e, 429);
+                throw new SummaryProcessingException(ErrorCode.SUMMARY_GEMINI_RATE_LIMIT, 429);
             }
             // 그 외 4xx
-            throw new SummaryProcessingException(ErrorCode.SUMMARY_AI_REQUEST_ERROR, e);
+            throw new SummaryProcessingException(ErrorCode.SUMMARY_GEMINI_REQUEST_ERROR, e);
         } catch (HttpServerErrorException e) {
             // 5xx 서버 오류
-            throw new SummaryProcessingException(ErrorCode.SUMMARY_AI_RESPONSE_ERROR, e);
+            throw new SummaryProcessingException(ErrorCode.SUMMARY_GEMINI_RESPONSE_ERROR, e);
         } catch (Exception e) {
             // 기타 네트워크 오류 등
-            throw new SummaryProcessingException(ErrorCode.SUMMARY_AI_REQUEST_ERROR, e);
+            throw new SummaryProcessingException(ErrorCode.SUMMARY_GEMINI_REQUEST_ERROR, e);
         }
     }
 }

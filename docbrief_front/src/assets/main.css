@@ -608,6 +608,11 @@ button.secondary {
   margin-bottom: 12px;
 }
 
+.summary-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .summary-text {
   font-size: 15px;
   color: #1e293b;

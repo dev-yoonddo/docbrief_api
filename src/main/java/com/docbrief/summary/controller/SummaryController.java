@@ -30,8 +30,7 @@ public class SummaryController {
             , @RequestParam("type") String type
             , @RequestBody SummaryInternalRequest summaryInternalRequest
             , HttpSession session){
-        System.out.println("user session");
-        System.out.println(session);
+
         String sessionId = session.getId();
         SummarySessionResponse summarySessionResponse = summaryProcessor.startSummaryEngine(summaryInternalRequest);
         summarySessionResponse = new SummarySessionResponse(sessionId, summaryInternalRequest.getTitle(), summarySessionResponse);

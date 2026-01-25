@@ -37,24 +37,6 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
-
-const summaryList = ref([]);
-const sessionId = ref("");
-
-// 페이지 로드 시 현재 세션ID 가져오기
-onMounted(async () => {
-  const res = await axios.get('/summary/session/init');
-  sessionId.value = res.data;
-
-  // 세션 기준으로 저장된 요약 기록 가져오기
-  const archiveRes = await axios.get(`/summary/archive?sessionId=${sessionId.value}`);
-  summaryList.value = archiveRes.data; // 서버에서 SummarySessionResponse[] 반환
-});
-</script>
-
 <style scoped>
 .keyword {
   font-weight: 500;

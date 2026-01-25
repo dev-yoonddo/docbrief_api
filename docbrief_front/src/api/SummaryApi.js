@@ -8,7 +8,6 @@ const api = axios.create({
 // 세션 초기화
 export async function initSession() {
   const res = await api.get("/documents/session/init");
-  console.log("Session ID:", res.data);
   return res.data;
 }
 
@@ -71,8 +70,7 @@ export async function summarizeDocument(documentId, parseDto, type) {
       },
     }
   );
-    console.log("요약 결과 ::: res.data");
-    console.log(res.data);
+
   return res.data; // String 요약 결과
 }
 

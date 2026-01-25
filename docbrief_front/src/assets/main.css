@@ -494,7 +494,7 @@ button.secondary {
   margin: 30px auto;      /* 화면 중앙 정렬 */
   padding: 32px 28px;
   border-radius: 20px;
-
+  inset: 0;
   background: linear-gradient(145deg, #f7fbff, #f8f6ff); /* 연한 색상 */
   box-shadow:
     0 30px 60px rgba(80, 70, 180, 0.15),
@@ -502,8 +502,8 @@ button.secondary {
     0 6px 12px rgba(80, 70, 180, 0.08);
 
   overflow-y: auto;
-  position: relative;
-  z-index: 50;
+  position: fixed;
+  z-index: 1000;
 }
 
 /* 보관함 버튼 */
@@ -732,4 +732,17 @@ button.secondary {
     #ddd6fe
   );
   color: #4c51bf;
+}
+
+/* 보관함 전체 */
+.archive-slide-enter-active {
+  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.archive-slide-enter-from {
+  opacity: 0;
+}
+
+.archive-slide-enter-to {
+  opacity: 1;
 }

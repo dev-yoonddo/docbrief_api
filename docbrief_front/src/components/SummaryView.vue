@@ -1,5 +1,4 @@
 <template>
-  <div v-if="!showArchive" class="doc-brief">
     <!-- 보관함 버튼 -->
     <button
       class="archive-toggle fixed top-4 right-4 text-2xl"
@@ -13,6 +12,7 @@
           {{ archiveCount }}
       </span>
     </button>
+  <div v-if="!showArchive" class="doc-brief">
     <!-- 입력 영역 -->
     <section
       class="input-section"
@@ -107,14 +107,9 @@
     </transition>
 
   </section>
+  <transition name="archive-slide">
     <!-- 보관함 영역 -->
-    <section v-if="showArchive" class="archive-section">
-      <button
-        class="archive-toggle fixed top-4 right-4 text-2xl"
-        @click="toggleArchive"
-      >
-        {{ showArchive ? '✖️' : '📂' }}
-      </button>
+    <section v-show="showArchive" class="archive-section">
 
       <h2 class="archive-title">요약 보관함</h2>
 
@@ -165,6 +160,7 @@
          </button>
       </div>
     </section>
+  </transition>
 </template>
 
 <script setup>

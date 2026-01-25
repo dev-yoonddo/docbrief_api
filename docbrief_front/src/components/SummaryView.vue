@@ -121,6 +121,8 @@
           v-for="item in summaryResultList"
           :key="item.jobId"
           class="summary-card"
+          :class="{  }"
+          @click="item.selected = !item.selected"
         >
           <input type="checkbox" v-model="item.selected" />
           <div class="card-header">
@@ -128,6 +130,7 @@
             <span class="session-id">Session: {{ item.sessionId }}</span>
           </div>
 
+          <p class="summary-title">{{ item.title }}</p>
           <p class="summary-text">{{ item.summaryResponse.summaryText }}</p>
 
           <div class="highlights">
@@ -145,12 +148,15 @@
           </div>
         </div>
       </transition-group>
-        <div
-          v-if="summaryResultList.some(i => i.selected)"
-          class="archive-action-bar"
-        >
-          선택한 요약본 다운로드
-        </div>
+      <div class="archive-actions">
+          <button
+           class="download-btn"
+           :disabled="selectedSummaries.length === 0"
+           @click="downloadSelected"
+         >
+           선택한 요약본 다운로드
+         </button>
+      </div>
     </section>
 </template>
 
@@ -181,6 +187,9 @@ const loadingStage = ref(null);
 const showArchive = ref(false);
 const sessionId = ref(null);
 const summaryResultList = ref([]); // 세션별 요약 결과 저장
+const selectedSummaries = computed(() =>
+    summaryResultList.value.filter(item => item.selected)
+);
 
 
 /**
@@ -395,12 +404,49 @@ function toggleArchive() {
     showArchive.value = !showArchive.value;
 }
 
+watch(showArchive, (isArchive) => {
+  // 보관함 이동 시, selected 초기화
+  if (isArchive) {
+    resetSelected();
+  }
+  if (!isArchive) {
+    resetSelected();
+  }
+});
+
+function resetSelected() {
+  summaryResultList.value.forEach(item => {
+    item.selected = false;
+  });
+}
+
 /**
  * 선택한 요약 다운로드
  */
-function downloadMergedSummary() {
-    const selectedSummaries = computed(() =>
-        summaryResultList.value.filter(item => item.selected)
-    );
+function downloadSelected() {
+  if (selectedSummaries.value.length === 0) return;
+
+  const content = buildDownloadText(selectedSummaries.value);
+
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `summary_${Date.now()}.txt`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function buildDownloadText(items) {
+  return items.map((item, index) => {
+    const { title, summaryResponse } = item;
+    return `
+[${index+1}. ${title ?? "untitled"}]
+${summaryResponse.summaryText}
+
+--------------------`;
+  }).join("\n");
 }
 </script>

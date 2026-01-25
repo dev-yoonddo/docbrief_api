@@ -10,6 +10,7 @@ import java.util.List;
 public class SummaryInternalRequest {
     public static List<SentenceDto> SentenceDto;
     private Long documentId;
+    private String title;
     private String fullText;
     private List<ParagraphDto> paragraphs;
 

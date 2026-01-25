@@ -1,8 +1,6 @@
 package com.docbrief.summary.controller;
 
-import com.docbrief.document.dto.api.DocumentCreateResponse;
 import com.docbrief.document.dto.internal.SummaryInternalRequest;
-import com.docbrief.summary.domain.SummaryResponse;
 import com.docbrief.summary.domain.SummarySessionResponse;
 import com.docbrief.summary.service.SummaryProcessor;
 import jakarta.servlet.http.HttpSession;
@@ -10,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @Log4j2
 @RestController
@@ -37,7 +34,7 @@ public class SummaryController {
         System.out.println(session);
         String sessionId = session.getId();
         SummarySessionResponse summarySessionResponse = summaryProcessor.startSummaryEngine(summaryInternalRequest);
-        summarySessionResponse = new SummarySessionResponse(sessionId, summarySessionResponse);
+        summarySessionResponse = new SummarySessionResponse(sessionId, summaryInternalRequest.getTitle(), summarySessionResponse);
         return ResponseEntity.ok(summarySessionResponse);
     }
 }

@@ -19,11 +19,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 
 @Log4j2
 @Service
@@ -87,7 +82,7 @@ public class SummaryProcessor {
 
             SummaryResponse summaryResponse = new SummaryResponse();
             summaryResponse = this.getSummaryResult(summaryResult.getJobId());
-            return new SummarySessionResponse(summaryJob.getJobId(), summaryResponse);
+            return new SummarySessionResponse(summaryJob.getJobId(), summaryRequest.getTitle(), summaryResponse);
 
         } catch (Exception e) {
             // 실패 시 document 상태 및 job 처리

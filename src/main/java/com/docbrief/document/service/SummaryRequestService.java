@@ -57,7 +57,8 @@ public class SummaryRequestService {
             paragraphDtos.add(new SummaryInternalRequest.ParagraphDto(paragraph.getParagraphOrder(), sentenceDtos));
         }
 
-        SummaryInternalRequest request = new SummaryInternalRequest(documentId, documentContent.getFullText(), paragraphDtos);
+        SummaryInternalRequest request =
+                new SummaryInternalRequest(documentId, document.getTitle(), documentContent.getFullText(), paragraphDtos);
 
         /*String requestJson = "";
         try{
@@ -67,13 +68,6 @@ public class SummaryRequestService {
         }*/
 
         return request;
-
-        // ai 분석 요청
-        // 추후 return 값 결정 후 응답dto 구성(DocumentStatus, Stirng returnText...)
-        // SummaryInternalResponse response  = analysisClient.summarize(requestJson);
-        // SummaryInternalResponse 상태값에 따라 document 상태 업데이트
-        // return analysisClient.summarize(requestJson);
-        //return summaryProcessor.startSummaryEngine(request);
     }
 
 }

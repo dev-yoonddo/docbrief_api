@@ -5,7 +5,7 @@
       class="archive-toggle fixed top-4 right-4 text-2xl"
       @click="toggleArchive"
     >
-      {{ showArchive ? '⬅️' : '📂' }}
+      {{ showArchive ? '✖️️' : '📂' }}
     </button>
     <!-- 입력 영역 -->
     <section
@@ -107,7 +107,7 @@
         class="archive-toggle fixed top-4 right-4 text-2xl"
         @click="toggleArchive"
       >
-        {{ showArchive ? '⬅️' : '📂' }}
+        {{ showArchive ? '✖️' : '📂' }}
       </button>
 
       <h2 class="archive-title">요약 보관함</h2>
@@ -122,6 +122,7 @@
           :key="item.jobId"
           class="summary-card"
         >
+          <input type="checkbox" v-model="item.selected" />
           <div class="card-header">
             <span class="job-id">Job ID: {{ item.jobId }}</span>
             <span class="session-id">Session: {{ item.sessionId }}</span>
@@ -144,11 +145,17 @@
           </div>
         </div>
       </transition-group>
+        <div
+          v-if="summaryResultList.some(i => i.selected)"
+          class="archive-action-bar"
+        >
+          선택한 요약본 다운로드
+        </div>
     </section>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import {
   uploadDocument,
   processDocument,
@@ -186,7 +193,23 @@ const hasResult = computed(() => !!summaryResult.value);
  */
 onMounted(async () => {
   sessionId.value = await initSession();
+  // 새로고침 시에도 보관함 유지
+    const saved = sessionStorage.getItem("summaryArchive");
+    if (saved) {
+      summaryResultList.value = JSON.parse(saved);
+    }
 });
+
+watch(
+  summaryResultList,
+  (val) => {
+    sessionStorage.setItem(
+      "summaryArchive",
+      JSON.stringify(val)
+    );
+  },
+  { deep: true }
+);
 
 /*
 * 로딩 완료 여부/**
@@ -262,14 +285,17 @@ async function uploadAndParse() {
     loadingStage.value = "SUMMARY";
     // 3. 요약 요청 (/{documentId}/summary)
     const summary = await summarizeDocument(
-    documentId.value,
-    parseDto,
-    mode.value
+        documentId.value,
+        parseDto,
+        mode.value
     );
 
     // summary.sessionId와 현재 프론트 세션 ID 비교
     if (summary.sessionId === sessionId.value) {
-      summaryResultList.value.push(summary); // 동일 세션이면 리스트에 저장
+      summaryResultList.value.push({
+            ...summary
+              ,selected: false
+      }); // 동일 세션이면 리스트에 저장
     }
     console.log("summaryResultList")
     console.log(summaryResultList)
@@ -367,5 +393,14 @@ function resetSummary() {
 function toggleArchive() {
     console.log(showArchive)
     showArchive.value = !showArchive.value;
+}
+
+/**
+ * 선택한 요약 다운로드
+ */
+function downloadMergedSummary() {
+    const selectedSummaries = computed(() =>
+        summaryResultList.value.filter(item => item.selected)
+    );
 }
 </script>

@@ -18,7 +18,9 @@
       class="input-section"
       :class="{ compact: hasResult }"
     >
-      <h2 class="title">DOC BRIEF</h2>
+      <h2 class="title text-5xl font-extrabold bg-gradient-to-r from-pink-400 to-yellow-300 text-white rounded-full px-6 py-3 shadow-lg animate-bounce">
+        DOC <span class="text-white/90">BRIEF</span> ✨
+      </h2>
       <!-- 입력 방식 탭 -->
       <div class="input-tabs">
         <button

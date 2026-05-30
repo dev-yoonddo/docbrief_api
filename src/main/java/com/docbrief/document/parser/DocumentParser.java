@@ -12,5 +12,11 @@ public interface DocumentParser {
         throw new UnsupportedOperationException(
                 "URL parsing is not supported for " + getSupportedType()
         );
-    };
+    }
+
+    default ParsedText parseFromText(String text) {
+        throw new UnsupportedOperationException(
+                "Plain text parsing is not supported for " + getSupportedType()
+        );
+    }
 }

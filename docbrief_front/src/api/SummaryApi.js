@@ -15,11 +15,12 @@ export async function initSession() {
  * 문서 업로드
  * POST /documents
  */
-export async function uploadDocument(mode, file, url) {
+export async function uploadDocument(mode, file, url, text) {
   const formData = new FormData();
   formData.append("mode", mode);
-  formData.append("file", file);
-  formData.append("url", url);
+  if (file) formData.append("file", file);
+  if (url) formData.append("url", url);
+  if (text) formData.append("text", text);
 
   const res = await api.post("/documents", formData, {
     headers: {
@@ -34,11 +35,12 @@ export async function uploadDocument(mode, file, url) {
  * 문서 파싱
  * POST /documents/{documentId}/process
  */
-export async function processDocument(mode, documentId, file, url) {
+export async function processDocument(mode, documentId, file, url, text) {
   const formData = new FormData();
   formData.append("mode", mode);
-  formData.append("file", file);
-  formData.append("url", url);
+  if (file) formData.append("file", file);
+  if (url) formData.append("url", url);
+  if (text) formData.append("text", text);
 
   const res = await api.post(
     `/documents/${documentId}/process`,

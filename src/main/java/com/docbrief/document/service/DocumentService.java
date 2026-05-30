@@ -23,9 +23,7 @@ public class DocumentService {
 
     private final DocumentRepository documentRepository;
 
-    public Long create(String mode, MultipartFile file, String url){
-        if ((file == null || file.isEmpty()) && (url == null || url.isBlank())) { throw new DocumentResourceException();}
-
+    public Long create(String mode, MultipartFile file, String url, String text){
         DocumentType type;
         Document document;
         switch (mode.toLowerCase()){
@@ -46,14 +44,20 @@ public class DocumentService {
                 documentRepository.save(document);
                 return document.getDocumentId();
 
+            case "text":
+                if (text == null || text.isBlank()) { throw new DocumentResourceException("텍스트 입력이 필요합니다."); }
+
+                String title = text.length() > 30 ? text.substring(0, 30) + "…" : text;
+                document = new Document(title, DocumentType.TXT);
+                documentRepository.save(document);
+                return document.getDocumentId();
+
             default:
                 throw new DocumentResourceException();
         }
     }
 
-    public SummaryInternalRequest processParsing(String mode, Long documentId, MultipartFile file, String url){
-        if ((file == null || file.isEmpty()) && (url == null || url.isBlank())) { throw new DocumentResourceException();}
-
+    public SummaryInternalRequest processParsing(String mode, Long documentId, MultipartFile file, String url, String text){
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new ResourceNotFoundException(documentId));
         DocumentStatus status = document.getStatus();
@@ -64,6 +68,8 @@ public class DocumentService {
                     documentParsingService.parseAndSaveDocument(documentId, file);
                 }else if("url".equals(mode.toLowerCase())){
                     documentParsingService.parseAndSaveUrlHtml(documentId, url);
+                }else if("text".equals(mode.toLowerCase())){
+                    documentParsingService.parseAndSaveText(documentId, text);
                 }else{
                     throw new DocumentResourceException();
                 }

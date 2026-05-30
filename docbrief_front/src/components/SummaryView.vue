@@ -18,9 +18,7 @@
       class="input-section"
       :class="{ compact: hasResult }"
     >
-      <h2 class="title text-5xl font-extrabold bg-gradient-to-r from-pink-400 to-yellow-300 text-white rounded-full px-6 py-3 shadow-lg animate-bounce">
-        DOC <span class="text-white/90">BRIEF</span> ✨
-      </h2>
+      <h2 class="title">DOC BRIEF</h2>
       <!-- 입력 방식 탭 -->
       <div class="input-tabs">
         <button
@@ -35,6 +33,13 @@
           @click="switchMode('url')"
         >
           URL 입력
+        </button>
+
+        <button
+          :class="{ active: mode === 'text' }"
+          @click="switchMode('text')"
+        >
+          텍스트 입력
         </button>
       </div>
 
@@ -63,6 +68,22 @@
           :disabled="!url || isLoading"
         >
           불러오기
+        </button>
+      </div>
+
+      <!-- 텍스트 직접 입력 -->
+      <div v-if="mode === 'text'" class="input-box text-input-box">
+        <textarea
+          v-model="textInput"
+          placeholder="요약할 텍스트를 입력하세요..."
+          rows="6"
+        />
+        <button
+          class="primary"
+          @click="submitText"
+          :disabled="!textInput.trim() || isLoading"
+        >
+          요약하기
         </button>
       </div>
     </section>
@@ -177,9 +198,10 @@ import {
 /**
  * UI 상태
  */
-const mode = ref("file"); // 'file' | 'url'
+const mode = ref("file"); // 'file' | 'url' | 'text'
 const file = ref(null);
 const url = ref(null);
+const textInput = ref("");
 const documentId = ref(null);
 const parseResult = ref(null);
 const errorMessage = ref(null);
@@ -305,10 +327,10 @@ async function uploadAndParse() {
     loadingStage.value = "ANALYZE";
 
     // 1. 파일 업로드 → documentId 발급
-    documentId.value = await uploadDocument(mode.value, file.value, url.value);
+    documentId.value = await uploadDocument(mode.value, file.value, url.value, null);
 
     // 2. 문서 파싱 (/documents/process)
-    const parseDto = await processDocument(mode.value, documentId.value, file.value, url.value);
+    const parseDto = await processDocument(mode.value, documentId.value, file.value, url.value, null);
 
     loadingStage.value = "SUMMARY";
     // 3. 요약 요청 (/{documentId}/summary)
@@ -318,17 +340,13 @@ async function uploadAndParse() {
         mode.value
     );
 
-    // summary.sessionId와 현재 프론트 세션 ID 비교
-    if (summary.sessionId === sessionId.value) {
-      summaryResultList.value.push({
-            ...summary
-              ,selected: false
-      }); // 동일 세션이면 리스트에 저장
-    }
-    console.log("summaryResultList")
-    console.log(summaryResultList)
     // 4. 결과 표시
     summaryResult.value = summary.summaryResponse;
+
+    // summary.sessionId와 현재 프론트 세션 ID 비교
+    if (summary.sessionId === sessionId.value) {
+      summaryResultList.value.push({ ...summary, selected: false });
+    }
   }catch(e){
     handleError(e);
   } finally {
@@ -349,10 +367,10 @@ async function loadAndParse() {
         loadingStage.value = "ANALYZE";
 
         // 1. documentId 발급
-        documentId.value = await uploadDocument(mode.value, file.value, url.value);
+        documentId.value = await uploadDocument(mode.value, file.value, url.value, null);
 
         // 2. URL 내부 HTML 파싱 (/url/process)
-        const parseDto = await processDocument(mode.value, documentId.value, file.value, url.value);
+        const parseDto = await processDocument(mode.value, documentId.value, file.value, url.value, null);
 
         loadingStage.value = "SUMMARY";
         // 3. 요약 요청 (/{documentId}/summary)
@@ -362,17 +380,14 @@ async function loadAndParse() {
           mode.value
         );
 
-        // summary.sessionId와 현재 프론트 세션 ID 비교
-        if (summary.sessionId === sessionId.value) {
-          summaryResultList.value.push(summary); // 동일 세션이면 리스트에 저장
-        }
-        console.log("summaryResultList")
-        console.log(summaryResultList)
         // 4. 결과 표시
         summaryResult.value = summary.summaryResponse;
+
+        // summary.sessionId와 현재 프론트 세션 ID 비교
+        if (summary.sessionId === sessionId.value) {
+          summaryResultList.value.push({ ...summary, selected: false });
+        }
     }catch(e){
-    console.log('오류왜남')
-    console.log(e)
         handleError(e);
     } finally {
         loadingStage.value = null;
@@ -393,6 +408,33 @@ function handleError(e) {
 }
 
 /**
+ * [텍스트 직접 입력] 텍스트 제출 → 파싱 → 요약
+ */
+async function submitText() {
+  try {
+    errorMessage.value = null;
+    loadingStage.value = "ANALYZE";
+
+    documentId.value = await uploadDocument(mode.value, null, null, textInput.value);
+    const parseDto = await processDocument(mode.value, documentId.value, null, null, textInput.value);
+
+    loadingStage.value = "SUMMARY";
+    const summary = await summarizeDocument(documentId.value, parseDto, mode.value);
+
+    // 4. 결과 표시
+    summaryResult.value = summary.summaryResponse;
+
+    if (summary.sessionId === sessionId.value) {
+      summaryResultList.value.push({ ...summary, selected: false });
+    }
+  } catch (e) {
+    handleError(e);
+  } finally {
+    loadingStage.value = null;
+  }
+}
+
+/**
  * 파일업로드,URL 버튼 클릭이벤트
  */
 function switchMode(nextMode) {
@@ -402,6 +444,7 @@ function switchMode(nextMode) {
     // 입력값도 같이 초기화
     file.value = null;
     url.value = null;
+    textInput.value = "";
 
     resetSummary();
   }

@@ -30,8 +30,9 @@ public class DocumentController {
     @PostMapping
     public ResponseEntity<?> create(@RequestParam(value="mode") String mode,
                                     @RequestParam(required = false, value="file") MultipartFile file,
-                                    @RequestParam(required = false, value="url") String url){
-        Long documentId = documentService.create(mode, file, url);
+                                    @RequestParam(required = false, value="url") String url,
+                                    @RequestParam(required = false, value="text") String  text){
+        Long documentId = documentService.create(mode, file, url, text);
         return ResponseEntity.ok(new DocumentCreateResponse(documentId));
     }
 
@@ -39,8 +40,9 @@ public class DocumentController {
     public SummaryInternalRequest process(@PathVariable Long id,
                                      @RequestParam(value="mode") String mode,
                                      @RequestParam(required = false, value="file") MultipartFile file,
-                                     @RequestParam(required = false, value="url") String url){
-        return documentService.processParsing(mode, id, file, url);
+                                     @RequestParam(required = false, value="url") String url,
+                                     @RequestParam(required = false, value="text") String text){
+        return documentService.processParsing(mode, id, file, url, text);
     }
 
     @GetMapping("/{id}/status")

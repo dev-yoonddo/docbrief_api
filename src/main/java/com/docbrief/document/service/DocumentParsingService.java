@@ -80,6 +80,28 @@ public class DocumentParsingService {
         }
     }
 
+    @Transactional
+    public void parseAndSaveText(Long documentId, String text) {
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new ResourceNotFoundException(documentId));
+
+        contentRepository.deleteByDocumentId(document.getDocumentId());
+        documentStatusService.updateDocumentStatus(document, DocumentStatus.EXTRACTING);
+
+        try {
+            DocumentParser parser = parserFactory.getParser(DocumentType.TXT);
+            ParsedText parsedText = parser.parseFromText(text);
+
+            saveParsedText(document, parsedText);
+            documentStatusService.updateDocumentStatus(document, DocumentStatus.EXTRACTED);
+
+        } catch (Exception e) {
+            log.error("Text parsing failed", e);
+            documentStatusService.markFailed(document.getDocumentId());
+            throw new DocumentParsingException();
+        }
+    }
+
     // 부모의 transaction을 그대로 사용(기존 트랜잭션 전파)
     @Transactional
     private void saveParsedText(Document document, ParsedText parsedText){

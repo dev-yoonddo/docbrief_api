@@ -1,7 +1,6 @@
 <template>
-  <SummaryView />
+  <router-view />
 </template>
 
 <script setup>
-import SummaryView from "./components/SummaryView.vue";
 </script>

@@ -1,17 +1,23 @@
 <template>
-    <!-- 보관함 버튼 -->
-    <button
-      class="archive-toggle fixed top-4 right-4 text-2xl"
-      @click="toggleArchive"
-    >
-      {{ showArchive ? '✖️️' : '📂' }}
-      <span
-          v-if="archiveCount > 0 && !showArchive"
-          class="archive-badge"
-        >
-          {{ archiveCount }}
-      </span>
-    </button>
+    <!-- 네비게이션 버튼 -->
+    <div class="nav-buttons fixed top-4 right-4">
+      <router-link to="/compare" class="nav-link compare-btn" title="문서 비교">
+        ⚖️
+      </router-link>
+      <button
+        class="archive-toggle text-2xl"
+        @click="toggleArchive"
+        title="보관함"
+      >
+        {{ showArchive ? '✖️️' : '📂' }}
+        <span
+            v-if="archiveCount > 0 && !showArchive"
+            class="archive-badge"
+          >
+            {{ archiveCount }}
+        </span>
+      </button>
+    </div>
   <div v-if="!showArchive" class="doc-brief">
     <!-- 입력 영역 -->
     <section
@@ -512,3 +518,38 @@ ${summaryResponse.summaryText}
   }).join("\n");
 }
 </script>
+
+<style>
+/* 네비게이션 버튼 컨테이너 */
+.nav-buttons {
+  display: flex;
+  gap: 8px;
+  z-index: 500;
+}
+
+/* 비교 링크 버튼 */
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  color: white;
+  text-decoration: none;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 12px 24px rgba(139, 92, 246, 0.35);
+}
+
+.nav-link:hover {
+  transform: scale(1.13);
+  box-shadow: 0 16px 32px rgba(139, 92, 246, 0.45);
+}
+
+.compare-btn {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+</style>

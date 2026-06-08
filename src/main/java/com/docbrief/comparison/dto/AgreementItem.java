@@ -13,9 +13,15 @@ import lombok.Setter;
 public class AgreementItem {
 
     /**
-     * 동의점 내용
+     * 동의점 설명/내용
      */
-    private String content;
+    private String description;
+
+    /**
+     * 동의점의 실제 텍스트
+     * - 원문에서 일치하는 문장이나 구절을 직접 인용
+     */
+    private String text;
 
     /**
      * 문서 A에서의 출처 정보
@@ -30,12 +36,14 @@ public class AgreementItem {
     /**
      * 생성자
      *
-     * @param content 동의점 내용
+     * @param description 동의점 설명
+     * @param text 동의점의 실제 텍스트
      * @param sourceA 문서 A의 출처 정보
      * @param sourceB 문서 B의 출처 정보
      */
-    public AgreementItem(String content, Source sourceA, Source sourceB) {
-        this.content = content;
+    public AgreementItem(String description, String text, Source sourceA, Source sourceB) {
+        this.description = description;
+        this.text = text;
         this.sourceA = sourceA;
         this.sourceB = sourceB;
     }

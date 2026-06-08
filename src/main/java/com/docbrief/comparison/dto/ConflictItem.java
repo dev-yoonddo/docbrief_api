@@ -14,10 +14,16 @@ import lombok.Setter;
 public class ConflictItem {
 
     /**
-     * 충돌의 주제 또는 키
+     * 충돌의 주제 또는 설명
      * - 무엇이 상충하는지를 나타냄
      */
-    private String topic;
+    private String description;
+
+    /**
+     * 충돌의 실제 텍스트
+     * - 상충하는 실제 텍스트나 모순되는 주장의 직접 인용문
+     */
+    private String text;
 
     /**
      * 문서 A의 입장/주장
@@ -50,15 +56,17 @@ public class ConflictItem {
     /**
      * 생성자
      *
-     * @param topic 충돌의 주제
+     * @param description 충돌의 주제/설명
+     * @param text 충돌의 실제 텍스트
      * @param claimA 문서 A의 주장
      * @param claimB 문서 B의 주장
      * @param sourceA 문서 A의 출처 정보
      * @param sourceB 문서 B의 출처 정보
      * @param severity 충돌의 심각도
      */
-    public ConflictItem(String topic, String claimA, String claimB, Source sourceA, Source sourceB, String severity) {
-        this.topic = topic;
+    public ConflictItem(String description, String text, String claimA, String claimB, Source sourceA, Source sourceB, String severity) {
+        this.description = description;
+        this.text = text;
         this.claimA = claimA;
         this.claimB = claimB;
         this.sourceA = sourceA;

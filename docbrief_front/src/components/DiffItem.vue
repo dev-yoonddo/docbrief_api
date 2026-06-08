@@ -48,13 +48,13 @@
           </p>
         </div>
 
-        <!-- 원문 보기 버튼 -->
+        <!-- 상세 비교 버튼 -->
         <button
           class="view-original-btn"
-          @click="openOriginalViewer"
+          @click="showDetail"
           :disabled="!canViewOriginal"
         >
-          📄 원문 보기
+          📄 상세 비교
         </button>
       </div>
     </transition>
@@ -80,6 +80,13 @@ const props = defineProps({
     required: true,
   },
   /**
+   * 카테고리 정보 (agreements, differences, conflicts)
+   */
+  category: {
+    type: String,
+    default: 'agreements',
+  },
+  /**
    * 원문 보기 버튼 클릭 이벤트 핸들러
    * @param {Object} item - 항목
    */
@@ -88,6 +95,8 @@ const props = defineProps({
     default: null,
   },
 });
+
+const emit = defineEmits(['show-detail']);
 
 // 타입별 레이블 매핑
 const typeLabelMap = {
@@ -115,6 +124,14 @@ function toggleExpand() {
 const canViewOriginal = computed(() => {
   return !!(props.item.sourceA || props.item.sourceB);
 });
+
+/**
+ * 상세 비교 버튼 클릭 핸들러
+ * parent에 이벤트 emit
+ */
+function showDetail() {
+  emit('show-detail', props.item);
+}
 
 /**
  * 원문 보기 버튼 클릭 핸들러

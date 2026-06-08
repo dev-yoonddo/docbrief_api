@@ -34,7 +34,8 @@
           v-for="(item, index) in activeItems"
           :key="`${activeCategory}-${index}`"
           :item="item"
-          :onViewOriginal="openOriginalViewer"
+          :category="activeCategory"
+          @show-detail="onShowDetail"
         />
       </transition-group>
     </div>
@@ -76,8 +77,11 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(['comparison-select']);
+
 /**
  * 카테고리 정의
+ * conflicts 탭 제거: 일치, 차이점 두 가지만 제공
  */
 const categories = {
   agreements: {
@@ -89,11 +93,6 @@ const categories = {
     label: "차이점",
     icon: "≠",
     items: () => props.data.differences || [],
-  },
-  conflicts: {
-    label: "충돌",
-    icon: "⚠",
-    items: () => props.data.conflicts || [],
   },
 };
 
@@ -128,6 +127,17 @@ function getCategoryCount(categoryKey) {
  */
 function switchCategory(key) {
   activeCategory.value = key;
+}
+
+/**
+ * 상세 비교 항목 선택 이벤트 처리
+ * @param {Object} item - 비교 항목
+ */
+function onShowDetail(item) {
+  emit('comparison-select', {
+    item,
+    category: activeCategory.value,
+  });
 }
 
 /**

@@ -64,15 +64,6 @@
               {{ comparisonData.differences.length }}
             </span>
           </button>
-          <button
-            :class="{ active: activeTab === 'conflicts' }"
-            @click="activeTab = 'conflicts'"
-          >
-            충돌
-            <span v-if="comparisonData.conflicts?.length" class="tab-count">
-              {{ comparisonData.conflicts.length }}
-            </span>
-          </button>
         </div>
 
         <!-- 일치 사항 섹션 -->
@@ -86,7 +77,8 @@
               v-for="(agreement, index) in comparisonData.agreements"
               :key="index"
               :item="agreement"
-              @view-original="openOriginalModal"
+              :category="'agreements'"
+              @show-detail="onComparisonSelect"
             />
           </div>
           <div v-else class="empty-state">
@@ -105,30 +97,12 @@
               v-for="(difference, index) in comparisonData.differences"
               :key="index"
               :item="difference"
-              @view-original="openOriginalModal"
+              :category="'differences'"
+              @show-detail="onComparisonSelect"
             />
           </div>
           <div v-else class="empty-state">
             <p>차이점이 없습니다.</p>
-          </div>
-        </div>
-
-        <!-- 충돌 섹션 -->
-        <div v-if="activeTab === 'conflicts'" class="result-content">
-          <h2>충돌</h2>
-          <div
-            v-if="comparisonData.conflicts?.length"
-            class="diff-sections"
-          >
-            <DiffItem
-              v-for="(conflict, index) in comparisonData.conflicts"
-              :key="index"
-              :item="conflict"
-              @view-original="openOriginalModal"
-            />
-          </div>
-          <div v-else class="empty-state">
-            <p>충돌하는 내용이 없습니다.</p>
           </div>
         </div>
 
@@ -140,6 +114,16 @@
         </div>
       </div>
     </transition>
+
+    <!-- 상세 비교 모달 -->
+    <ComparisonDetailModal
+      :is-visible="isDetailModalOpen"
+      :item="selectedDetailItem"
+      :category="selectedCategory"
+      :document-a="documentInfoA"
+      :document-b="documentInfoB"
+      :on-close="closeDetailModal"
+    />
   </div>
 </template>
 
@@ -149,6 +133,7 @@ import { useRoute } from "vue-router";
 import { getComparisonResult, getComparisonStatus } from "../api/ComparisonApi";
 import OverallSummary from "./OverallSummary.vue";
 import DiffItem from "./DiffItem.vue";
+import ComparisonDetailModal from "./ComparisonDetailModal.vue";
 
 const route = useRoute();
 
@@ -161,6 +146,13 @@ const hasFailed = ref(false);
 const errorMessage = ref("");
 const pollCount = ref(0);
 const maxPolls = ref(60); // 최대 60번 폴링 (약 2분)
+
+// ========== 상세 비교 모달 상태 ==========
+const isDetailModalOpen = ref(false);
+const selectedDetailItem = ref(null);
+const selectedCategory = ref("agreements");
+const documentInfoA = ref({ name: "문서 A" });
+const documentInfoB = ref({ name: "문서 B" });
 
 // ========== 계산된 속성 ==========
 const loadingText = computed(() => {
@@ -228,12 +220,28 @@ async function pollComparisonStatus() {
 }
 
 /**
- * 원문 보기 모달 열기
+ * 상세 비교 모달 열기
+ * DiffItem에서 emit된 이벤트 핸들러
  * @param {Object} item - 비교 항목
  */
-function openOriginalModal(item) {
-  // 추후 구현: OriginalViewer 모달 연결
-  console.log("원문 보기:", item);
+function onComparisonSelect(item) {
+  selectedDetailItem.value = item;
+  selectedCategory.value = activeTab.value;
+
+  // 문서 정보 설정 (라우트 파라미터나 comparisonData에서 추출)
+  // 현재는 기본값 사용
+  documentInfoA.value = { name: "문서 A" };
+  documentInfoB.value = { name: "문서 B" };
+
+  isDetailModalOpen.value = true;
+}
+
+/**
+ * 상세 비교 모달 닫기
+ */
+function closeDetailModal() {
+  isDetailModalOpen.value = false;
+  selectedDetailItem.value = null;
 }
 </script>
 

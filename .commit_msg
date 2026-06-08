@@ -1,0 +1,11 @@
+feat: 비교분석 기능에 실제 텍스트 인용 필드(text) 추가
+
+사용자가 비교분석 결과에서 실제 원문을 볼 수 있도록:
+- DTO(AgreementItem, DifferenceItem, ConflictItem)에 'text' 필드 추가
+- 'description' 필드는 설명, 'text' 필드는 원문 직접 인용으로 분리
+- application.yml 프롬프트 수정:
+  - agreements, differences, conflicts 각각의 output-format에 text 필드 정의
+  - constraint에 text 필드 규칙 명시 (원문 직접 인용 필수, 요약/의역 금지)
+- AI가 각 항목별로 구체적인 원문 텍스트를 포함하도록 강제
+
+Co-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>

@@ -13,6 +13,17 @@ import lombok.Setter;
 public class DifferenceItem {
 
     /**
+     * 차이점 설명
+     */
+    private String description;
+
+    /**
+     * 차이점의 실제 텍스트
+     * - 차이를 보이는 실제 텍스트나 두 내용을 대비하는 인용문
+     */
+    private String text;
+
+    /**
      * 문서 A의 내용
      */
     private String contentA;
@@ -35,12 +46,16 @@ public class DifferenceItem {
     /**
      * 생성자
      *
+     * @param description 차이점 설명
+     * @param text 차이점의 실제 텍스트
      * @param contentA 문서 A의 내용
      * @param contentB 문서 B의 내용
      * @param sourceA 문서 A의 출처 정보
      * @param sourceB 문서 B의 출처 정보
      */
-    public DifferenceItem(String contentA, String contentB, Source sourceA, Source sourceB) {
+    public DifferenceItem(String description, String text, String contentA, String contentB, Source sourceA, Source sourceB) {
+        this.description = description;
+        this.text = text;
         this.contentA = contentA;
         this.contentB = contentB;
         this.sourceA = sourceA;

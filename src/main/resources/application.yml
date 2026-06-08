@@ -76,51 +76,49 @@ prompt:
       - 모호한 유사성이나 차이는 포함하지 말 것
 
     output-format: |
-      출력은 반드시 아래 JSON 형식을 따른다.
+      출력은 반드시 아래 JSON 형식을 따른다. 필드명은 정확히 지정된 대로 사용하라.
       {
         "overallSummary": "두 문서의 전체적인 비교분석 요약",
         "agreements": [
           {
-            "content": "공통으로 포함된 내용",
-            "sourceDocA": {
-              "paragraphOrder": "문서A의 문단 순서",
-              "sentenceOrder": "문서A의 문장 순서"
+            "description": "공통으로 포함된 내용",
+            "sourceA": {
+              "paragraphOrder": 문서A의 문단 순서 (숫자),
+              "sentenceOrder": 문서A의 문장 순서 (숫자)
             },
-            "sourceDocB": {
-              "paragraphOrder": "문서B의 문단 순서",
-              "sentenceOrder": "문서B의 문장 순서"
+            "sourceB": {
+              "paragraphOrder": 문서B의 문단 순서 (숫자),
+              "sentenceOrder": 문서B의 문장 순서 (숫자)
             }
           }
         ],
         "differences": [
           {
-            "content": "차이나는 내용 설명",
-            "sourceDocA": {
-              "paragraphOrder": "문서A의 문단 순서",
-              "sentenceOrder": "문서A의 문장 순서"
+            "description": "차이나는 내용 설명",
+            "sourceA": {
+              "paragraphOrder": 문서A의 문단 순서 (숫자),
+              "sentenceOrder": 문서A의 문장 순서 (숫자)
             },
-            "sourceDocB": {
-              "paragraphOrder": "문서B의 문단 순서",
-              "sentenceOrder": "문서B의 문장 순서"
+            "sourceB": {
+              "paragraphOrder": 문서B의 문단 순서 (숫자),
+              "sentenceOrder": 문서B의 문장 순서 (숫자)
             }
           }
         ],
         "conflicts": [
           {
-            "topic": "충돌하는 주제",
-            "contentDocA": "문서A의 내용",
-            "contentDocB": "문서B의 내용",
-            "sourceDocA": {
-              "paragraphOrder": "문서A의 문단 순서",
-              "sentenceOrder": "문서A의 문장 순서"
+            "description": "충돌하는 주제와 양쪽 내용",
+            "sourceA": {
+              "paragraphOrder": 문서A의 문단 순서 (숫자),
+              "sentenceOrder": 문서A의 문장 순서 (숫자)
             },
-            "sourceDocB": {
-              "paragraphOrder": "문서B의 문단 순서",
-              "sentenceOrder": "문서B의 문장 순서"
+            "sourceB": {
+              "paragraphOrder": 문서B의 문단 순서 (숫자),
+              "sentenceOrder": 문서B의 문장 순서 (숫자)
             }
           }
         ],
-        "violationReason": "규칙 위반 이유 (준수 시 null)"
+        "violationReason": null 또는 "규칙 위반 이유"
       }
 
     violation-reasons: |

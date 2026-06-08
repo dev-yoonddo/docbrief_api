@@ -24,6 +24,7 @@ public class DocumentParsingService {
     private final DocumentStatusService documentStatusService;
     private final DocumentTypeResolver typeResolver;
     private final ParserFactory parserFactory;
+    private final PlainTextDocumentParser plainTextDocumentParser;
 
     private final DocumentRepository documentRepository;
     private final DocumentContentRepository contentRepository;
@@ -89,8 +90,7 @@ public class DocumentParsingService {
         documentStatusService.updateDocumentStatus(document, DocumentStatus.EXTRACTING);
 
         try {
-            DocumentParser parser = parserFactory.getParser(DocumentType.TXT);
-            ParsedText parsedText = parser.parseFromText(text);
+            ParsedText parsedText = plainTextDocumentParser.parseFromText(text);
 
             saveParsedText(document, parsedText);
             documentStatusService.updateDocumentStatus(document, DocumentStatus.EXTRACTED);

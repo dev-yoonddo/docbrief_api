@@ -48,7 +48,7 @@ public class DocumentService {
                 if (text == null || text.isBlank()) { throw new DocumentResourceException("텍스트 입력이 필요합니다."); }
 
                 String title = text.length() > 30 ? text.substring(0, 30) + "…" : text;
-                document = new Document(title, DocumentType.TXT);
+                document = new Document(title, DocumentType.PLAIN_TEXT);
                 documentRepository.save(document);
                 return document.getDocumentId();
 

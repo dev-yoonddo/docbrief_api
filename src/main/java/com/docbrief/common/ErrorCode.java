@@ -47,6 +47,13 @@ public enum ErrorCode {
             HttpStatus.INTERNAL_SERVER_ERROR
     ),
 
+    /*** 비교분석 ***/
+    COMPARISON_PROCESSING_ERROR(
+            "COMPARISON-001",
+            "비교분석 처리 중 오류가 발생했습니다.",
+            HttpStatus.INTERNAL_SERVER_ERROR
+    ),
+
     /*** 요약 ***/
     // JSON 변환 관련
     SUMMARY_REQUEST_CONVERSION_ERROR(

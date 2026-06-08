@@ -2,6 +2,7 @@ package com.docbrief.summary.ai;
 
 import com.docbrief.common.ErrorCode;
 import com.docbrief.common.SummaryProcessingException;
+import com.docbrief.comparison.domain.ComparisonJob;
 import com.docbrief.summary.ai.OpenAiResponse;
 import com.docbrief.summary.domain.SummaryJob;
 import com.docbrief.summary.domain.SummaryRequest;
@@ -26,6 +27,13 @@ public class OpenAiClient implements LlmClient {
     @Value("${openai.model.name}")
     private String model;
 
+    /**
+     * OpenAI API를 사용하여 문서를 요약한다.
+     *
+     * @param text 요약할 문서 텍스트 (JSON 형식)
+     * @param summaryJob 요약 작업
+     * @return 요약 결과 (JSON 문자열)
+     */
     @Override
     public String summarize(String text, SummaryJob summaryJob) {
 
@@ -65,5 +73,53 @@ public class OpenAiClient implements LlmClient {
         .block();
 
         return Objects.requireNonNull(response).getText();
-     }
+    }
+
+    /**
+     * OpenAI API를 사용하여 두 문서를 비교분석한다.
+     *
+     * @param text 비교분석할 문서 텍스트 (두 문서의 JSON 포함)
+     * @param comparisonJob 비교분석 작업
+     * @return 비교분석 결과 (JSON 문자열)
+     */
+    @Override
+    public String compare(String text, ComparisonJob comparisonJob) {
+
+        OpenAiRequest request = OpenAiRequest.fromText(model, text);
+
+        OpenAiResponse response = openAiWebClient.post()
+        .uri("/chat/completions")
+        .bodyValue(request)
+        .retrieve()
+        .onStatus(
+            status -> status.value() == 429,
+            clientResponse ->
+                clientResponse.bodyToMono(String.class)
+                    .flatMap(errorBody -> {
+                        log.warn("OpenAI 429 Response Body for comparison: {}", errorBody);
+                        return Mono.error(
+                            new SummaryProcessingException(
+                                    ErrorCode.SUMMARY_OPENAI_RATE_LIMIT, 429
+                            )
+                        );
+                    })
+        )
+        .onStatus(
+                HttpStatusCode::isError,
+                clientResponse ->
+                        clientResponse.bodyToMono(String.class)
+                                .flatMap(errorBody -> {
+                                    log.error("OpenAI Error Response for comparison: {}", errorBody);
+                                    return Mono.error(
+                                            new SummaryProcessingException(
+                                                    ErrorCode.SUMMARY_OPENAI_REQUEST_ERROR
+                                            )
+                                    );
+                                })
+        )
+        .bodyToMono(OpenAiResponse.class)
+        .block();
+
+        return Objects.requireNonNull(response).getText();
+    }
 }

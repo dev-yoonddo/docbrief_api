@@ -8,10 +8,13 @@ import com.docbrief.document.dto.internal.SummaryInternalRequest;
 import com.docbrief.summary.ai.GeminiClient;
 import com.docbrief.summary.ai.OpenAiClient;
 import com.docbrief.summary.ai.PromptBuilder;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 /**
  * 두 문서를 비교분석하는 처리기
@@ -67,10 +70,36 @@ public class ComparisonProcessor {
 
             return comparisonResult;
 
-        } catch (Exception e) {
-            // 실패 시 작업 상태 FAILED로 업데이트
+        } catch (JsonParseException e) {
+            // JSON 파싱 구조적 오류 처리 (잘못된 JSON 형식)
+            log.error("AI 응답 JSON 구조 오류: {}", e.getMessage(), e);
             comparisonJobService.setJobFailed(comparisonJob.getJobId());
-            throw new SummaryProcessingException(ErrorCode.SUMMARY_AI_REQUEST_ERROR, e);
+            throw new SummaryProcessingException(ErrorCode.COMPARISON_PROCESSING_ERROR, e);
+
+        } catch (JsonProcessingException e) {
+            // JSON 처리 오류 (직렬화/역직렬화 실패)
+            log.error("AI 응답 JSON 처리 실패: {}", e.getMessage(), e);
+            comparisonJobService.setJobFailed(comparisonJob.getJobId());
+            throw new SummaryProcessingException(ErrorCode.COMPARISON_PROCESSING_ERROR, e);
+
+        } catch (HttpClientErrorException e) {
+            // API 클라이언트 오류 처리 (400, 401, 403, 404 등)
+            int statusCode = e.getStatusCode().value();
+            if (statusCode == 429) {
+                // 할당량 초과 (429 Too Many Requests)
+                log.warn("API 할당량 초과 - 상태코드: {}", statusCode);
+            } else {
+                // 기타 클라이언트 오류
+                log.error("API 클라이언트 오류 - 상태코드: {}, 메시지: {}", statusCode, e.getMessage());
+            }
+            comparisonJobService.setJobFailed(comparisonJob.getJobId());
+            throw new SummaryProcessingException(ErrorCode.COMPARISON_PROCESSING_ERROR, e);
+
+        } catch (Exception e) {
+            // 예상치 못한 기타 오류
+            log.error("비교분석 처리 중 예상치 못한 오류: {}", e.getMessage(), e);
+            comparisonJobService.setJobFailed(comparisonJob.getJobId());
+            throw new SummaryProcessingException(ErrorCode.COMPARISON_PROCESSING_ERROR, e);
         }
     }
 

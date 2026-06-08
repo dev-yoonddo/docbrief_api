@@ -1,7 +1,15 @@
 package com.docbrief.comparison.controller;
 
+import com.docbrief.common.ComparisonProcessingException;
+import com.docbrief.common.ResourceNotFoundException;
+import com.docbrief.comparison.domain.ComparisonJob;
+import com.docbrief.comparison.domain.ComparisonResult;
 import com.docbrief.comparison.dto.*;
+import com.docbrief.comparison.repository.ComparisonJobRepository;
+import com.docbrief.comparison.repository.ComparisonResultRepository;
 import com.docbrief.comparison.service.ComparisonService;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +26,9 @@ import java.util.List;
 public class ComparisonController {
 
     private final ComparisonService comparisonService;
+    private final ComparisonJobRepository comparisonJobRepository;
+    private final ComparisonResultRepository comparisonResultRepository;
+    private final ObjectMapper objectMapper;
 
     /**
      * 여러 파일을 동시에 업로드하여 비교분석 Job 생성
@@ -68,12 +79,21 @@ public class ComparisonController {
      */
     @GetMapping("/{id}/status")
     public ResponseEntity<ComparisonStatusResponse> getComparisonStatus(@PathVariable Long id) {
-        // ComparisonJobRepository에서 Job 조회하여 상태 반환
-        // 실제 구현: comparisonService에서 상태 조회 메서드 호출
-        log.info("비교분석 작업 상태 조회 - jobId: {}", id);
+        // ComparisonJobRepository에서 Job 조회
+        ComparisonJob job = comparisonJobRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("비교분석 작업을 찾을 수 없습니다 - jobId: {}", id);
+                    return new ResourceNotFoundException(id);
+                });
 
-        // TODO: 실제 구현에서는 ComparisonService에서 조회 메서드 작성 필요
-        return ResponseEntity.ok(new ComparisonStatusResponse());
+        log.info("비교분석 작업 상태 조회 성공 - jobId: {}, status: {}", id, job.getStatus());
+
+        return ResponseEntity.ok(new ComparisonStatusResponse(
+                job.getJobId(),
+                job.getStatus(),
+                job.getCreatedAt(),
+                job.getUpdatedAt()
+        ));
     }
 
     /**
@@ -85,11 +105,24 @@ public class ComparisonController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ComparisonResponse> getComparison(@PathVariable Long id) {
-        // ComparisonJobRepository에서 결과 조회하여 반환
-        // 실제 구현: comparisonService에서 결과 조회 메서드 호출
-        log.info("비교분석 결과 조회 - jobId: {}", id);
+        // ComparisonResultRepository에서 jobId로 결과 조회
+        ComparisonResult result = comparisonResultRepository.findByComparisonJob_JobId(id)
+                .orElseThrow(() -> {
+                    log.warn("비교분석 결과를 찾을 수 없습니다 - jobId: {}", id);
+                    return new ResourceNotFoundException(id);
+                });
 
-        // TODO: 실제 구현에서는 ComparisonService에서 조회 메서드 작성 필요
-        return ResponseEntity.ok(new ComparisonResponse());
+        // JSON 문자열을 ComparisonResponse 객체로 파싱
+        try {
+            ComparisonResponse response = objectMapper.readValue(result.getContent(), ComparisonResponse.class);
+            log.info("비교분석 결과 조회 성공 - jobId: {}", id);
+            return ResponseEntity.ok(response);
+        } catch (JsonMappingException e) {
+            log.error("JSON 파싱 오류 - jobId: {}, 원인: {}", id, e.getMessage(), e);
+            throw new ComparisonProcessingException("결과 데이터 파싱 실패: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("결과 데이터 처리 중 오류 발생 - jobId: {}, 원인: {}", id, e.getMessage(), e);
+            throw new ComparisonProcessingException("결과 데이터 처리 실패: " + e.getMessage());
+        }
     }
 }

@@ -249,6 +249,7 @@ import {
   uploadDocument,
   processDocument,
   createComparisonJob,
+  processComparison,
 } from "../api/ComparisonApi";
 
 const router = useRouter();
@@ -393,6 +394,14 @@ async function startComparison() {
     // 비교 Job 생성
     const comparisonData = await createComparisonJob([fileA.value, fileB.value]);
     const comparisonId = comparisonData.jobId;
+
+    // 비교분석 처리 요청 (documentAId, documentBId, mode를 요청 본문에 포함)
+    await processComparison(
+      comparisonId,
+      documentIdA.value,
+      documentIdB.value,
+      compareMode.value
+    );
 
     // 비교 결과 페이지로 이동
     router.push({

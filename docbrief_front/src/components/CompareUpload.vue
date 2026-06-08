@@ -248,7 +248,6 @@ import { useRouter } from "vue-router";
 import {
   uploadDocument,
   processDocument,
-  createComparisonJob,
   processComparison,
 } from "../api/ComparisonApi";
 
@@ -391,17 +390,15 @@ async function startComparison() {
     errorMessage.value = null;
     isComparing.value = true;
 
-    // 비교 Job 생성
-    const comparisonData = await createComparisonJob([fileA.value, fileB.value]);
-    const comparisonId = comparisonData.jobId;
-
-    // 비교분석 처리 요청 (documentAId, documentBId, mode를 요청 본문에 포함)
-    await processComparison(
-      comparisonId,
+    // 비교분석 처리 요청
+    // processComparison이 ComparisonJob 생성 + 비교 처리를 함께 수행
+    const result = await processComparison(
       documentIdA.value,
       documentIdB.value,
       compareMode.value
     );
+
+    const comparisonId = result.jobId;
 
     // 비교 결과 페이지로 이동
     router.push({

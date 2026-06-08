@@ -4,6 +4,7 @@ import com.docbrief.common.ComparisonProcessingException;
 import com.docbrief.common.ResourceNotFoundException;
 import com.docbrief.comparison.domain.ComparisonJob;
 import com.docbrief.comparison.domain.ComparisonResult;
+import com.docbrief.comparison.domain.ComparisonStatus;
 import com.docbrief.comparison.dto.*;
 import com.docbrief.comparison.repository.ComparisonJobRepository;
 import com.docbrief.comparison.repository.ComparisonResultRepository;
@@ -39,6 +40,43 @@ public class ComparisonController {
             @RequestParam("files") List<MultipartFile> files) {
         ComparisonCreateResponse response = comparisonService.createComparisonJob(files);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 두 문서로부터 비교분석 처리 (ComparisonJob 생성 포함)
+     * POST /comparisons/compare
+     * 이미 생성된 문서 ID를 받아서 ComparisonJob을 생성하고 비교 처리 시작
+     *
+     * @param request 비교분석 요청 정보 (documentAId, documentBId, mode)
+     * @return Job ID와 상태 응답
+     */
+    @PostMapping("/compare")
+    public ResponseEntity<ComparisonCreateResponse> compareDocuments(
+            @RequestBody ComparisonProcessRequest request) {
+        try {
+            log.info("비교분석 요청: documentAId={}, documentBId={}, mode={}",
+                request.getDocumentAId(), request.getDocumentBId(), request.getMode());
+
+            // ComparisonJob 생성
+            ComparisonJob job = new ComparisonJob(ComparisonStatus.CREATED);
+            comparisonJobRepository.save(job);
+
+            // 비교분석 처리 시작
+            comparisonService.startComparison(
+                job.getJobId(),
+                request.getDocumentAId(),
+                request.getDocumentBId(),
+                request.getMode()
+            );
+
+            return ResponseEntity.ok(new ComparisonCreateResponse(
+                job.getJobId(),
+                List.of(request.getDocumentAId(), request.getDocumentBId())
+            ));
+        } catch (Exception e) {
+            log.error("비교분석 처리 중 오류", e);
+            throw new ComparisonProcessingException("비교분석 처리 실패: " + e.getMessage());
+        }
     }
 
     /**

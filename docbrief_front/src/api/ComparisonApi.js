@@ -58,22 +58,22 @@ export async function getComparisonStatus(comparisonId) {
 
 /**
  * 비교분석 처리 요청
- * POST /comparisons/{id}/process
- * @param {number} comparisonId - 비교분석 Job ID
+ * POST /comparisons/compare (새 엔드포인트)
+ * 이미 생성된 두 문서로부터 ComparisonJob 생성 및 비교 처리
  * @param {number} documentAId - 문서 A ID
  * @param {number} documentBId - 문서 B ID
  * @param {string} mode - 비교 모드 (full, section)
- * @returns {{ comparisonId, status }}
+ * @returns {{ jobId, status }}
  */
-export async function processComparison(comparisonId, documentAId, documentBId, mode) {
+export async function processComparison(documentAId, documentBId, mode) {
   try {
-    // 요청 본문에 문서 ID와 비교 모드를 포함하여 서버에 전달
-    const res = await api.post(`/comparisons/${comparisonId}/process`, {
+    // 새 엔드포인트: documentAId, documentBId를 받아 Job 생성 및 비교 처리
+    const res = await api.post('/comparisons/compare', {
       documentAId,
       documentBId,
       mode
     });
-    return res.data;
+    return res.data; // { jobId, status }
   } catch (error) {
     handleApiError(error);
   }

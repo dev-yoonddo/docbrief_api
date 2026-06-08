@@ -464,19 +464,19 @@ function handleError(e, context = "") {
 
 .document-upload-section {
   padding: 32px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(6px);
+  border-radius: 18px;
+  background: white;
+  backdrop-filter: blur(8px);
   box-shadow:
-    0 20px 40px rgba(80, 70, 180, 0.1),
-    0 8px 16px rgba(80, 70, 180, 0.06);
+    0 10px 25px rgba(80, 70, 180, 0.08),
+    0 4px 12px rgba(80, 70, 180, 0.05);
 }
 
 .document-upload-section h2 {
   font-size: 20px;
   font-weight: 700;
-  color: #4338ca;
-  margin-bottom: 20px;
+  color: #3b82f6;
+  margin-bottom: 24px;
   text-align: center;
 }
 
@@ -629,19 +629,19 @@ button:disabled {
   max-width: 1200px;
   margin: 0 auto 40px;
   padding: 32px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(6px);
+  border-radius: 18px;
+  background: white;
+  backdrop-filter: blur(8px);
   box-shadow:
-    0 20px 40px rgba(80, 70, 180, 0.1),
-    0 8px 16px rgba(80, 70, 180, 0.06);
+    0 10px 25px rgba(80, 70, 180, 0.08),
+    0 4px 12px rgba(80, 70, 180, 0.05);
 }
 
 .mode-selection h3 {
   font-size: 18px;
   font-weight: 700;
-  color: #4338ca;
-  margin-bottom: 20px;
+  color: #3b82f6;
+  margin-bottom: 24px;
 }
 
 .radio-group {

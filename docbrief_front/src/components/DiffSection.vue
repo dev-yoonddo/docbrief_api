@@ -161,19 +161,19 @@ function closeOriginalViewer() {
 <style scoped>
 /* 섹션 컨테이너 */
 .diff-section {
-  background: rgba(255, 255, 255, 0.8);
+  background: white;
   border-radius: 16px;
   box-shadow:
-    0 12px 24px rgba(0, 0, 0, 0.08),
-    0 6px 12px rgba(0, 0, 0, 0.06);
-  padding: 24px;
+    0 10px 25px rgba(0, 0, 0, 0.1),
+    0 4px 10px rgba(0, 0, 0, 0.06);
+  padding: 28px;
 }
 
 /* 카테고리 탭 */
 .category-tabs {
   display: flex;
   gap: 8px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   border-bottom: 2px solid #e2e8f0;
   overflow-x: auto;
   padding-bottom: 0;
@@ -193,7 +193,7 @@ function closeOriginalViewer() {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 16px;
+  padding: 14px 18px;
   border: none;
   background: transparent;
   color: #64748b;
@@ -208,13 +208,14 @@ function closeOriginalViewer() {
 }
 
 .category-tab:hover {
-  color: #1e293b;
-  background: rgba(59, 130, 246, 0.04);
+  color: #2d3748;
+  background: rgba(59, 130, 246, 0.05);
 }
 
 .category-tab.active {
   color: #3b82f6;
   border-bottom-color: #3b82f6;
+  font-weight: 700;
 }
 
 /* 탭 아이콘 */
@@ -234,17 +235,18 @@ function closeOriginalViewer() {
   justify-content: center;
   min-width: 24px;
   height: 24px;
-  padding: 0 6px;
+  padding: 0 8px;
   background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
+  color: #2563eb;
   border-radius: 12px;
   font-size: 12px;
   font-weight: 700;
-  margin-left: 4px;
+  margin-left: 6px;
 }
 
 .category-tab.active .tab-count {
-  background: rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.25);
+  color: #2563eb;
 }
 
 /* 카테고리 콘텐츠 */
@@ -297,7 +299,7 @@ function closeOriginalViewer() {
 .items-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 /* 트랜지션 */

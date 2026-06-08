@@ -159,13 +159,13 @@ function closeModal() {
 /* 모달 컨테이너 */
 .comparison-detail-modal {
   background: white;
-  border-radius: 16px;
+  border-radius: 18px;
   box-shadow:
-    0 30px 60px rgba(0, 0, 0, 0.25),
-    0 12px 24px rgba(0, 0, 0, 0.15);
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    0 10px 25px rgba(0, 0, 0, 0.1);
   max-width: 1000px;
   width: 100%;
-  max-height: 85vh;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -176,9 +176,9 @@ function closeModal() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24px;
-  border-bottom: 2px solid #e2e8f0;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 28px;
+  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #f8f9fb 0%, #f0f4f9 100%);
   flex-shrink: 0;
 }
 
@@ -189,9 +189,9 @@ function closeModal() {
 }
 
 .detail-header h3 {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
-  color: #1e293b;
+  color: #2d3748;
   margin: 0;
 }
 
@@ -230,12 +230,12 @@ function closeModal() {
   width: 36px;
   height: 36px;
   border: none;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.08);
-  color: #1e293b;
+  border-radius: 10px;
+  background: rgba(59, 130, 246, 0.08);
+  color: #3b82f6;
   font-size: 20px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -243,7 +243,8 @@ function closeModal() {
 }
 
 .close-btn:hover {
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(59, 130, 246, 0.15);
+  transform: scale(1.05);
 }
 
 /* 문서 정보 영역 */
@@ -252,8 +253,8 @@ function closeModal() {
   align-items: center;
   justify-content: center;
   gap: 16px;
-  padding: 16px 24px;
-  background: rgba(241, 245, 249, 0.6);
+  padding: 18px 28px;
+  background: linear-gradient(135deg, #edf2f7 0%, #e6f0ff 100%);
   border-bottom: 1px solid #e2e8f0;
 }
 
@@ -263,7 +264,7 @@ function closeModal() {
   gap: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: #475569;
+  color: #2d3748;
 }
 
 .doc-icon {
@@ -287,9 +288,10 @@ function closeModal() {
 .detail-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2px;
+  gap: 1px;
   flex: 1;
   overflow: hidden;
+  background: #f0f4f9;
 }
 
 /* 문서 패널 */
@@ -297,6 +299,10 @@ function closeModal() {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: white;
+}
+
+.panel-a {
   border-right: 1px solid #e2e8f0;
 }
 
@@ -305,8 +311,8 @@ function closeModal() {
 }
 
 .panel-header {
-  padding: 16px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+  padding: 18px;
+  background: linear-gradient(135deg, #f8f9fb 0%, #f0f4f9 100%);
   border-bottom: 1px solid #e2e8f0;
   flex-shrink: 0;
 }
@@ -314,15 +320,15 @@ function closeModal() {
 .panel-header h4 {
   font-size: 14px;
   font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 6px 0;
+  color: #2d3748;
+  margin: 0 0 8px 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .panel-meta {
-  font-size: 12px;
-  color: #64748b;
+  font-size: 0.85rem;
+  color: #718096;
   font-weight: 500;
 }
 
@@ -330,8 +336,8 @@ function closeModal() {
 .panel-body {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.95);
+  padding: 20px;
+  background: white;
 }
 
 .text-content {
@@ -340,50 +346,52 @@ function closeModal() {
 
 .original-text {
   font-size: 14px;
-  color: #334155;
+  color: #2d3748;
   line-height: 1.8;
   white-space: pre-wrap;
   word-break: break-word;
   margin: 0;
-  background: rgba(248, 250, 252, 0.7);
-  padding: 12px;
-  border-radius: 6px;
-  border-left: 3px solid #3b82f6;
+  background: linear-gradient(135deg, #f8f9fb 0%, #f0f4f9 100%);
+  padding: 16px;
+  border-radius: 10px;
+  border-left: 4px solid #3b82f6;
 }
 
 .empty-text {
-  color: #94a3b8;
+  color: #a0aec0;
   font-style: italic;
   text-align: center;
-  padding: 32px 16px;
+  padding: 40px 20px;
   margin: 0;
+  font-size: 14px;
 }
 
 /* 모달 푸터 */
 .detail-footer {
   display: flex;
   justify-content: flex-end;
-  padding: 16px 24px;
+  padding: 18px 28px;
   border-top: 1px solid #e2e8f0;
-  background: rgba(248, 250, 252, 0.8);
+  background: linear-gradient(135deg, #f8f9fb 0%, #f0f4f9 100%);
   flex-shrink: 0;
 }
 
 .close-modal-btn {
-  padding: 10px 24px;
+  padding: 11px 28px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 .close-modal-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
 }
 
 /* 트랜지션 */

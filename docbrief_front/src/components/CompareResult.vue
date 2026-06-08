@@ -298,15 +298,15 @@ function closeDetailModal() {
 .result-tabs {
   display: flex;
   gap: 8px;
-  margin: 32px 0 24px;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+  margin: 36px 0 28px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.5);
 }
 
 .result-tabs button {
-  padding: 14px 24px;
+  padding: 16px 28px;
   border: none;
   background: transparent;
-  color: #64748b;
+  color: #718096;
   font-weight: 600;
   font-size: 15px;
   cursor: pointer;
@@ -317,12 +317,13 @@ function closeDetailModal() {
 }
 
 .result-tabs button:hover {
-  color: #4338ca;
+  color: #2d3748;
 }
 
 .result-tabs button.active {
-  color: #4338ca;
-  border-bottom-color: #6366f1;
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+  font-weight: 700;
 }
 
 .tab-count {
@@ -337,21 +338,21 @@ function closeDetailModal() {
 
 /* 결과 콘텐츠 */
 .result-content {
-  padding: 32px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(6px);
+  padding: 36px;
+  border-radius: 18px;
+  background: white;
+  backdrop-filter: blur(8px);
   box-shadow:
-    0 20px 40px rgba(80, 70, 180, 0.1),
-    0 8px 16px rgba(80, 70, 180, 0.06);
-  margin-bottom: 32px;
+    0 10px 25px rgba(80, 70, 180, 0.08),
+    0 4px 12px rgba(80, 70, 180, 0.05);
+  margin-bottom: 36px;
 }
 
 .result-content h2 {
   font-size: 22px;
   font-weight: 700;
-  color: #4338ca;
-  margin-bottom: 24px;
+  color: #3b82f6;
+  margin-bottom: 28px;
 }
 
 .diff-sections {

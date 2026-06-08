@@ -26,26 +26,26 @@ defineProps({
 
 <style scoped>
 .overall-summary-card {
-  margin-bottom: 32px;
+  margin-bottom: 36px;
   padding: 32px;
-  border-radius: 20px;
+  border-radius: 16px;
   background: linear-gradient(135deg, #dbeafe 0%, #ede9fe 100%);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   box-shadow:
-    0 20px 40px rgba(59, 130, 246, 0.15),
-    0 8px 16px rgba(59, 130, 246, 0.1);
+    0 10px 25px rgba(59, 130, 246, 0.12),
+    0 4px 12px rgba(59, 130, 246, 0.08);
 }
 
 .card-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 14px;
+  margin-bottom: 18px;
 }
 
 .card-icon {
-  font-size: 28px;
+  font-size: 32px;
 }
 
 .card-header h2 {
@@ -58,7 +58,7 @@ defineProps({
 .summary-text {
   font-size: 15px;
   line-height: 1.8;
-  color: #1e293b;
+  color: #2d3748;
   margin: 0;
   white-space: pre-wrap;
   word-break: break-word;
